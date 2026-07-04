@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GP Calculator | NASTES Research Hub</title>
+  <meta name="description" content="Calculate your GPA and CGPA using The Polytechnic Ibadan official grading scale.">
+
+  <link rel="manifest" href="/nastestpi25-26study/manifest.json">
+  <meta name="theme-color" content="#1B4332">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="/nastestpi25-26study/icons/icon-192.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080808; --bg-mid: #111111; --bg-card: #161616;
+      --border: #222222; --text: #F0EDE6; --text-dim: #B8B5AF;
+      --accent: #1B4332; --accent-lit: #2D6A4F;
+      --ease: 0.3s cubic-bezier(0.4,0,0.2,1); --nav-h: 60px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+    ::selection { background: var(--accent); color: var(--text); }
+
+    /* TOPBAR */
+    .topbar {
+      position: fixed; inset: 0 0 auto 0; height: var(--nav-h);
+      background: rgba(8,8,8,0.94); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px; z-index: 100; gap: 10px;
+    }
+    .burger { background: none; border: none; cursor: pointer; padding: 8px 6px; display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+    .burger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 1px; transition: var(--ease); }
+    .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .topbar-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; flex: 1; min-width: 0; }
+    .topbar-logos { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .topbar-logos .lg-nastes { height: 34px; width: 34px; object-fit: contain; }
+    .topbar-logos .lg-poly { height: 26px; width: 26px; object-fit: contain; opacity: 0.82; }
+    .topbar-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12.5px; letter-spacing: 0.07em; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar-name em { display: block; font-style: normal; font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: 0.14em; color: var(--accent-lit); font-weight: 400; margin-top: 2px; }
+
+    /* SIDE NAV */
+    .nav-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 150; opacity: 0; pointer-events: none; transition: var(--ease); }
+    .nav-mask.on { opacity: 1; pointer-events: all; }
+    .sidenav { position: fixed; top: 0; left: 0; bottom: 0; width: 276px; max-width: 84vw; background: #0c0c0c; border-right: 1px solid var(--border); z-index: 200; transform: translateX(-100%); transition: var(--ease); display: flex; flex-direction: column; overflow-y: auto; }
+    .sidenav.on { transform: translateX(0); }
+    .sn-head { padding: 18px 18px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .sn-head .lg-nastes { height: 38px; width: 38px; object-fit: contain; }
+    .sn-head .lg-poly { height: 28px; width: 28px; object-fit: contain; opacity: 0.8; }
+    .sn-head-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.04em; line-height: 1.3; }
+    .sn-links { flex: 1; padding: 10px 0; }
+    .sn-links a { display: flex; align-items: center; gap: 11px; padding: 11px 18px; color: var(--text-dim); text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 500; border-left: 3px solid transparent; transition: var(--ease); }
+    .sn-links a:hover, .sn-links a.active { color: var(--text); background: rgba(27,67,50,0.13); border-left-color: var(--accent); }
+    .sn-links a .ni { font-size: 15px; width: 19px; text-align: center; flex-shrink: 0; }
+    .sn-rule { height: 1px; background: var(--border); margin: 7px 18px; }
+    .sn-links a.admin-lnk { color: var(--accent-lit); }
+    .sn-links a.admin-lnk:hover { color: var(--text); background: rgba(27,67,50,0.2); }
+    .sn-foot { padding: 14px 18px; border-top: 1px solid var(--border); }
+    .sn-foot p { font-family: 'Space Mono', monospace; font-size: 9.5px; color: var(--text-dim); line-height: 1.75; letter-spacing: 0.02em; }
+    .sn-foot strong { color: var(--accent-lit); }
+
+    /* MAIN */
+    main { padding-top: var(--nav-h); }
+
+    /* PAGE HERO */
+    .page-hero { padding: 48px 20px 40px; background: linear-gradient(160deg, var(--bg) 0%, var(--bg-mid) 100%); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(27,67,50,0.12) 0%, transparent 70%); pointer-events: none; }
+    .page-hero::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(27,67,50,0.22) 1px, transparent 1px); background-size: 28px 28px; pointer-events: none; }
+    .hero-inner { position: relative; z-index: 1; max-width: 560px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(27,67,50,0.18); border: 1px solid rgba(27,67,50,0.35); padding: 5px 14px; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--accent-lit); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+    .hero-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px, 7vw, 44px); line-height: 1.1; letter-spacing: 0.01em; margin-bottom: 10px; }
+    .hero-title span { color: var(--accent-lit); }
+    .hero-sub { font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-dim); line-height: 1.65; }
+
+    /* CONTENT */
+    .content { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* SECTION CARD */
+    .sec-card { background: var(--bg-card); border: 1px solid var(--border); padding: 24px 20px; margin-bottom: 18px; position: relative; overflow: hidden; }
+    .sec-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-lit)); }
+    .card-label { font-family: 'Space Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-lit); margin-bottom: 5px; }
+    .card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); margin-bottom: 4px; }
+    .card-sub { font-family: 'DM Sans', sans-serif; font-size: 12.5px; color: var(--text-dim); margin-bottom: 18px; line-height: 1.5; }
+
+    /* TABLES */
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    th { background: rgba(27,67,50,0.16); color: var(--accent-lit); font-family: 'Space Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+    td { padding: 9px 14px; border-bottom: 1px solid rgba(240,237,230,0.04); color: var(--text-dim); font-family: 'DM Sans', sans-serif; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(27,67,50,0.06); }
+
+    .gl { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13.5px; }
+    .gpv { color: var(--accent-lit); font-weight: 600; }
+    .gA  { color: #22C55E; } .gAB { color: #4ADE80; } .gB  { color: #86EFAC; }
+    .gBC { color: #FCD34D; } .gC  { color: #FCD34D; } .gCD { color: #FB923C; }
+    .gD  { color: #F97316; } .gDE { color: #EF4444; } .gF  { color: #DC2626; }
+
+    .cls-D { color: #22C55E; font-family: 'Syne', sans-serif; font-weight: 700; }
+    .cls-U { color: #4ADE80; font-family: 'Syne', sans-serif; font-weight: 700; }
+    .cls-L { color: #FCD34D; font-family: 'Syne', sans-serif; font-weight: 700; }
+    .cls-P { color: #FB923C; font-family: 'Syne', sans-serif; font-weight: 700; }
+    .cls-F { color: #DC2626; font-family: 'Syne', sans-serif; font-weight: 700; }
+
+    /* RESULT CARD */
+    .result-card { display: none; background: var(--bg-card); border: 1px solid var(--accent); padding: 36px 20px; margin-bottom: 18px; text-align: center; position: relative; overflow: hidden; }
+    .result-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
+    .res-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-lit); margin-bottom: 10px; }
+    .res-gpa { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(52px, 14vw, 88px); color: var(--text); line-height: 1; margin-bottom: 8px; }
+    .res-class { font-size: 20px; margin-bottom: 10px; }
+    .res-note { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text-dim); line-height: 1.6; max-width: 420px; margin: 0 auto; }
+
+    /* COURSE ROWS */
+    .course-row { margin-bottom: 10px; background: rgba(240,237,230,0.02); border: 1px solid rgba(240,237,230,0.06); padding: 14px; transition: border-color var(--ease); }
+    .course-row:hover { border-color: rgba(27,67,50,0.3); }
+    .cname { width: 100%; background: rgba(240,237,230,0.04); border: 1px solid rgba(240,237,230,0.08); color: var(--text); padding: 9px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; margin-bottom: 10px; outline: none; transition: border-color var(--ease); }
+    .cname:focus { border-color: var(--accent); background: rgba(27,67,50,0.06); }
+    .cname::placeholder { color: var(--text-dim); font-size: 12px; }
+    .gp-row { display: grid; grid-template-columns: 1fr 90px 60px 36px; gap: 8px; align-items: center; }
+    .gp-inp { background: rgba(240,237,230,0.04); border: 1px solid rgba(240,237,230,0.08); color: var(--text); padding: 9px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; width: 100%; transition: border-color var(--ease); }
+    .gp-inp:focus { border-color: var(--accent); background: rgba(27,67,50,0.06); }
+    .gp-inp::placeholder { color: var(--text-dim); font-size: 11px; }
+    .grade-out { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; text-align: center; color: var(--text-dim); transition: color var(--ease); }
+    .del-btn { width: 34px; height: 34px; background: rgba(204,34,34,0.1); border: 1px solid rgba(204,34,34,0.2); color: #EF4444; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: var(--ease); flex-shrink: 0; }
+    .del-btn:hover { background: rgba(204,34,34,0.22); }
+
+    /* BUTTONS */
+    .btn-row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+    .btn-add { background: rgba(27,67,50,0.16); border: 1px solid rgba(27,67,50,0.35); color: var(--accent-lit); padding: 11px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--ease); }
+    .btn-add:hover { background: rgba(27,67,50,0.28); transform: translateY(-1px); }
+    .btn-calc { background: var(--accent); border: none; color: var(--text); padding: 11px 26px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: var(--ease); box-shadow: 0 0 20px rgba(27,67,50,0.3); }
+    .btn-calc:hover { background: var(--accent-lit); transform: translateY(-1px); }
+    .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 11px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: var(--ease); }
+    .btn-reset:hover { border-color: var(--accent-lit); color: var(--accent-lit); }
+
+    /* FOOTER */
+    .footer { background: #050505; border-top: 1px solid var(--border); padding: 48px 20px 32px; }
+    .ft-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+    .ft-brand img { height: 40px; width: 40px; object-fit: contain; }
+    .ft-site-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; color: var(--text); }
+    .ft-motto { font-family: 'Space Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; color: var(--accent-lit); margin-top: 3px; }
+    .ft-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 18px; margin-bottom: 30px; }
+    .ft-links a { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-dim); text-decoration: none; padding: 3px 0; transition: var(--ease); }
+    .ft-links a:hover { color: var(--accent-lit); }
+    .ft-rule { height: 1px; background: var(--border); margin-bottom: 22px; }
+    .ft-credit { font-family: 'Space Mono', monospace; font-size: 9.5px; color: var(--text-dim); line-height: 2; letter-spacing: 0.04em; }
+    .ft-credit strong { color: var(--accent-lit); }
+
+    @media (min-width: 480px) { .ft-links { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 768px) { .content { padding: 48px 40px 80px; } .page-hero { padding: 60px 40px 48px; } .footer { padding: 56px 40px 40px; } }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Open menu" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="topbar-brand" href="/nastestpi25-26study/">
+    <div class="topbar-logos">
+      <img class="lg-nastes" src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES Logo">
+      <img class="lg-poly" src="/nastestpi25-26study/icons/polytechnic-logo.png" alt="Polytechnic Ibadan">
+    </div>
+    <div class="topbar-name">NASTES RESEARCH HUB<em>POLYTECHNIC IBADAN</em></div>
+  </a>
+</header>
+
+<div class="nav-mask" id="navMask" onclick="toggleNav()"></div>
+
+<nav class="sidenav" id="sidenav">
+  <div class="sn-head">
+    <img class="lg-nastes" src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES">
+    <img class="lg-poly" src="/nastestpi25-26study/icons/polytechnic-logo.png" alt="Polytechnic Ibadan">
+    <div class="sn-head-title">NASTES RESEARCH HUB</div>
+  </div>
+  <div class="sn-links">
+    <a href="/nastestpi25-26study/"><span class="ni">🏠</span> Home</a>
+    <a href="/nastestpi25-26study/Pages/gp-calculator.html" class="active"><span class="ni">🎓</span> GP Calculator</a>
+    <a href="/nastestpi25-26study/Pages/past-questions.html"><span class="ni">📄</span> Past Questions</a>
+    <a href="/nastestpi25-26study/Pages/study-quiz.html"><span class="ni">🧪</span> Study and Quiz</a>
+    <a href="/nastestpi25-26study/Pages/departments.html"><span class="ni">🏛️</span> Departments</a>
+    <a href="/nastestpi25-26study/Pages/marketplace.html"><span class="ni">🛒</span> Student Marketplace</a>
+    <a href="/nastestpi25-26study/Pages/academic-calendar.html"><span class="ni">📅</span> Academic Calendar</a>
+    <a href="/nastestpi25-26study/Pages/news-events.html"><span class="ni">📢</span> News and Events</a>
+    <a href="/nastestpi25-26study/Pages/about.html"><span class="ni">ℹ️</span> About NASTES</a>
+    <div class="sn-rule"></div>
+    <a href="/nastestpi25-26study/#contact"><span class="ni">✉️</span> Contact Us</a>
+    <div class="sn-rule"></div>
+    <a href="/nastestpi25-26study/Pages/admin.html" class="admin-lnk"><span class="ni">⚙️</span> Admin</a>
+  </div>
+  <div class="sn-foot">
+    <p><strong>Adeniji Habeeb Adewale</strong><br>President, NASTES TPI Chapter 25/26<br>Era of Unity and Advancement</p>
+  </div>
+</nav>
+
+<main>
+  <div class="page-hero">
+    <div class="hero-inner">
+      <div class="hero-badge">🎓 Academic Tool</div>
+      <h1 class="hero-title">GP <span>Calculator</span></h1>
+      <p class="hero-sub">Calculate your Grade Point using The Polytechnic Ibadan official grading scale. Works for all departments under NASTES.</p>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- RESULT (shown after calc) -->
+    <div class="result-card" id="resultCard">
+      <div class="res-label">YOUR RESULT</div>
+      <div class="res-gpa" id="resGpa">0.00</div>
+      <div class="res-class" id="resClass">--</div>
+      <p class="res-note" id="resNote"></p>
+    </div>
+
+    <!-- CALCULATOR -->
+    <div class="sec-card">
+      <p class="card-label">CALCULATOR</p>
+      <div class="card-title">Enter Your Courses</div>
+      <p class="card-sub">Fill in your score (0 to 100) and credit units for each course. The grade updates live as you type.</p>
+      <div id="courseContainer"></div>
+      <div class="btn-row">
+        <button class="btn-add" onclick="addRow()">+ Add Course</button>
+        <button class="btn-calc" onclick="calculate()">Calculate GP →</button>
+        <button class="btn-reset" onclick="resetAll()">Reset</button>
+      </div>
+    </div>
+
+    <!-- GRADING SCALE -->
+    <div class="sec-card">
+      <p class="card-label">REFERENCE</p>
+      <div class="card-title">TPI Grading Scale</div>
+      <p class="card-sub">Official score to grade point conversion at The Polytechnic Ibadan.</p>
+      <table>
+        <thead><tr><th>Score Range</th><th>Grade</th><th>Grade Point</th><th>Remark</th></tr></thead>
+        <tbody>
+          <tr><td>75 to 100</td><td><span class="gl gA">A</span></td><td class="gpv">4.00</td><td>Excellent</td></tr>
+          <tr><td>70 to 74</td><td><span class="gl gAB">AB</span></td><td class="gpv">3.50</td><td>Very Good</td></tr>
+          <tr><td>65 to 69</td><td><span class="gl gB">B</span></td><td class="gpv">3.25</td><td>Good</td></tr>
+          <tr><td>60 to 64</td><td><span class="gl gBC">BC</span></td><td class="gpv">3.00</td><td>Good</td></tr>
+          <tr><td>55 to 59</td><td><span class="gl gC">C</span></td><td class="gpv">2.75</td><td>Average</td></tr>
+          <tr><td>50 to 54</td><td><span class="gl gCD">CD</span></td><td class="gpv">2.50</td><td>Average</td></tr>
+          <tr><td>45 to 49</td><td><span class="gl gD">D</span></td><td class="gpv">2.25</td><td>Below Average</td></tr>
+          <tr><td>40 to 44</td><td><span class="gl gDE">DE</span></td><td class="gpv">2.00</td><td>Below Average</td></tr>
+          <tr><td>0 to 39</td><td><span class="gl gF">F</span></td><td class="gpv">0.00</td><td>Failure</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CLASS OF DIPLOMA -->
+    <div class="sec-card">
+      <p class="card-label">CLASSIFICATION</p>
+      <div class="card-title">Class of Diploma</div>
+      <p class="card-sub">Your CGPA at the end of your programme determines your final class of diploma.</p>
+      <table>
+        <thead><tr><th>CGPA Range</th><th>Class of Diploma</th></tr></thead>
+        <tbody>
+          <tr><td>3.50 to 4.00</td><td><span class="cls-D">Distinction 🏆</span></td></tr>
+          <tr><td>3.00 to 3.49</td><td><span class="cls-U">Upper Credit ⭐</span></td></tr>
+          <tr><td>2.50 to 2.99</td><td><span class="cls-L">Lower Credit ✓</span></td></tr>
+          <tr><td>2.00 to 2.49</td><td><span class="cls-P">Pass</span></td></tr>
+          <tr><td>0.00 to 1.99</td><td><span class="cls-F">Failure</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="ft-brand">
+      <img src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES Logo">
+      <div>
+        <div class="ft-site-name">NASTES RESEARCH HUB</div>
+        <div class="ft-motto">Technology For Human Advancement</div>
+      </div>
+    </div>
+    <div class="ft-links">
+      <a href="/nastestpi25-26study/">Home</a>
+      <a href="/nastestpi25-26study/Pages/gp-calculator.html">GP Calculator</a>
+      <a href="/nastestpi25-26study/Pages/past-questions.html">Past Questions</a>
+      <a href="/nastestpi25-26study/Pages/study-quiz.html">Study and Quiz</a>
+      <a href="/nastestpi25-26study/Pages/departments.html">Departments</a>
+      <a href="/nastestpi25-26study/Pages/marketplace.html">Student Marketplace</a>
+      <a href="/nastestpi25-26study/Pages/academic-calendar.html">Academic Calendar</a>
+      <a href="/nastestpi25-26study/Pages/news-events.html">News and Events</a>
+      <a href="/nastestpi25-26study/Pages/about.html">About NASTES</a>
+      <a href="/nastestpi25-26study/#contact">Contact Us</a>
+      <a href="/nastestpi25-26study/Pages/admin.html">Admin</a>
+    </div>
+    <div class="ft-rule"></div>
+    <div class="ft-credit">
+      <strong>NASTES TPI Chapter 25/26</strong><br>
+      Era of Unity and Advancement<br>
+      President: <strong>Adeniji Habeeb Adewale</strong><br>
+      The Polytechnic Ibadan &nbsp;·&nbsp; 2025/2026
+    </div>
+  </footer>
+</main>
+
+<script>
+  var GRADES = [
+    {min:75,max:100,letter:'A',  gp:4.00},
+    {min:70,max:74, letter:'AB', gp:3.50},
+    {min:65,max:69, letter:'B',  gp:3.25},
+    {min:60,max:64, letter:'BC', gp:3.00},
+    {min:55,max:59, letter:'C',  gp:2.75},
+    {min:50,max:54, letter:'CD', gp:2.50},
+    {min:45,max:49, letter:'D',  gp:2.25},
+    {min:40,max:44, letter:'DE', gp:2.00},
+    {min:0, max:39, letter:'F',  gp:0.00}
+  ];
+
+  function getGrade(score) {
+    for (var i = 0; i < GRADES.length; i++) {
+      if (score >= GRADES[i].min && score <= GRADES[i].max) return GRADES[i];
+    }
+    return GRADES[GRADES.length - 1];
+  }
+
+  function gradeColor(gp) {
+    if (gp >= 3.5) return '#22C55E';
+    if (gp >= 3.0) return '#4ADE80';
+    if (gp >= 2.5) return '#86EFAC';
+    if (gp >= 2.0) return '#FCD34D';
+    return '#EF4444';
+  }
+
+  function getDiplomaClass(gpa) {
+    if (gpa >= 3.50) return { text:'Distinction 🏆', cls:'cls-D', note:'Outstanding! You have achieved the highest class of diploma. Keep inspiring those around you.' };
+    if (gpa >= 3.00) return { text:'Upper Credit ⭐', cls:'cls-U', note:'Excellent result! Upper Credit is a strong achievement. Push just a little more for Distinction next time.' };
+    if (gpa >= 2.50) return { text:'Lower Credit ✓', cls:'cls-L', note:'Good effort. You are on the right track. With more consistency you can reach Upper Credit.' };
+    if (gpa >= 2.00) return { text:'Pass', cls:'cls-P', note:'You passed. Work harder this coming semester and aim for a better result.' };
+    return { text:'Failure', cls:'cls-F', note:'Do not give up. Identify what went wrong, seek academic support, and come back stronger.' };
+  }
+
+  function addRow() {
+    var c = document.getElementById('courseContainer');
+    var row = document.createElement('div');
+    row.className = 'course-row';
+    row.innerHTML =
+      '<input class="cname" type="text" placeholder="Course name (optional, e.g. MTH 111)">' +
+      '<div class="gp-row">' +
+        '<input class="gp-inp sc" type="number" min="0" max="100" placeholder="Score (0 to 100)">' +
+        '<input class="gp-inp un" type="number" min="1" max="6" placeholder="Units">' +
+        '<span class="grade-out">--</span>' +
+        '<button class="del-btn" onclick="removeRow(this)">✕</button>' +
+      '</div>';
+
+    row.querySelector('.sc').addEventListener('input', function() {
+      var sc  = parseFloat(this.value);
+      var out = row.querySelector('.grade-out');
+      if (!isNaN(sc) && sc >= 0 && sc <= 100) {
+        var g = getGrade(Math.round(sc));
+        out.textContent = g.letter;
+        out.style.color = gradeColor(g.gp);
+      } else {
+        out.textContent = '--';
+        out.style.color = 'var(--text-dim)';
+      }
+    });
+
+    c.appendChild(row);
+  }
+
+  function removeRow(btn) { btn.closest('.course-row').remove(); }
+
+  function calculate() {
+    var rows  = document.querySelectorAll('.course-row');
+    var total = 0, units = 0, count = 0;
+    rows.forEach(function(row) {
+      var sc = parseFloat(row.querySelector('.sc').value);
+      var un = parseFloat(row.querySelector('.un').value);
+      if (isNaN(sc) || isNaN(un) || un <= 0) return;
+      var g = getGrade(Math.min(100, Math.max(0, Math.round(sc))));
+      row.querySelector('.grade-out').textContent = g.letter;
+      row.querySelector('.grade-out').style.color  = gradeColor(g.gp);
+      total += g.gp * un;
+      units += un;
+      count++;
+    });
+    if (count === 0 || units === 0) { alert('Please enter at least one course with a score and unit.'); return; }
+    var gpa  = (total / units).toFixed(2);
+    var dipl = getDiplomaClass(parseFloat(gpa));
+    var card = document.getElementById('resultCard');
+    document.getElementById('resGpa').textContent   = gpa;
+    var rc = document.getElementById('resClass');
+    rc.textContent = dipl.text;
+    rc.className   = 'res-class ' + dipl.cls;
+    document.getElementById('resNote').textContent  = dipl.note;
+    card.style.display = 'block';
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetAll() {
+    document.getElementById('courseContainer').innerHTML = '';
+    document.getElementById('resultCard').style.display = 'none';
+    for (var i = 0; i < 6; i++) addRow();
+  }
+
+  function toggleNav() {
+    var nav  = document.getElementById('sidenav');
+    var mask = document.getElementById('navMask');
+    var b    = document.getElementById('burger');
+    nav.classList.toggle('on');
+    mask.classList.toggle('on');
+    b.classList.toggle('open');
+    document.body.style.overflow = nav.classList.contains('on') ? 'hidden' : '';
+  }
+
+  resetAll();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/nastestpi25-26study/sw.js');
+  }
+</script>
+
+</body>
+</html>
