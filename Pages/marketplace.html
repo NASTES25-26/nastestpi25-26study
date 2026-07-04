@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Marketplace | NASTES Research Hub</title>
+  <meta name="description" content="Buy, sell and swap with fellow NASTES students. Post your business, products or services.">
+
+  <link rel="manifest" href="/nastestpi25-26study/manifest.json">
+  <meta name="theme-color" content="#1B4332">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="/nastestpi25-26study/icons/icon-192.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080808; --bg-mid: #111111; --bg-card: #161616;
+      --border: #222222; --text: #F0EDE6; --text-dim: #B8B5AF;
+      --accent: #1B4332; --accent-lit: #2D6A4F;
+      --ease: 0.3s cubic-bezier(0.4,0,0.2,1); --nav-h: 60px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; width: 100%; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+    ::selection { background: var(--accent); color: var(--text); }
+
+    /* TOPBAR */
+    .topbar { position: fixed; inset: 0 0 auto 0; height: var(--nav-h); background: rgba(8,8,8,0.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; z-index: 100; gap: 10px; width: 100%; }
+    .burger { background: none; border: none; cursor: pointer; padding: 8px 6px; display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+    .burger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 1px; transition: var(--ease); }
+    .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .topbar-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; flex: 1; min-width: 0; overflow: hidden; }
+    .topbar-logos { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .topbar-logos .lg-nastes { height: 34px; width: 34px; object-fit: contain; }
+    .topbar-logos .lg-poly { height: 26px; width: 26px; object-fit: contain; opacity: 0.82; }
+    .topbar-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12.5px; letter-spacing: 0.07em; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar-name em { display: block; font-style: normal; font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: 0.14em; color: var(--accent-lit); font-weight: 400; margin-top: 2px; }
+
+    /* SIDE NAV */
+    .nav-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 150; opacity: 0; pointer-events: none; transition: var(--ease); }
+    .nav-mask.on { opacity: 1; pointer-events: all; }
+    .sidenav { position: fixed; top: 0; left: 0; bottom: 0; width: 276px; max-width: 84vw; background: #0c0c0c; border-right: 1px solid var(--border); z-index: 200; transform: translateX(-100%); transition: var(--ease); display: flex; flex-direction: column; overflow-y: auto; }
+    .sidenav.on { transform: translateX(0); }
+    .sn-head { padding: 18px 18px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .sn-head .lg-nastes { height: 38px; width: 38px; object-fit: contain; }
+    .sn-head .lg-poly { height: 28px; width: 28px; object-fit: contain; opacity: 0.8; }
+    .sn-head-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.04em; line-height: 1.3; }
+    .sn-links { flex: 1; padding: 10px 0; }
+    .sn-links a { display: flex; align-items: center; gap: 11px; padding: 11px 18px; color: var(--text-dim); text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 500; border-left: 3px solid transparent; transition: var(--ease); }
+    .sn-links a:hover, .sn-links a.active { color: var(--text); background: rgba(27,67,50,0.13); border-left-color: var(--accent); }
+    .sn-links a .ni { font-size: 15px; width: 19px; text-align: center; flex-shrink: 0; }
+    .sn-rule { height: 1px; background: var(--border); margin: 7px 18px; }
+    .sn-links a.admin-lnk { color: var(--accent-lit); }
+    .sn-links a.admin-lnk:hover { color: var(--text); background: rgba(27,67,50,0.2); }
+    .sn-foot { padding: 14px 18px; border-top: 1px solid var(--border); }
+    .sn-foot p { font-family: 'Space Mono', monospace; font-size: 9.5px; color: var(--text-dim); line-height: 1.75; letter-spacing: 0.02em; }
+    .sn-foot strong { color: var(--accent-lit); }
+
+    main { padding-top: var(--nav-h); width: 100%; overflow-x: hidden; }
+
+    /* PAGE HERO */
+    .page-hero { padding: 40px 20px 32px; background: linear-gradient(160deg, var(--bg) 0%, var(--bg-mid) 100%); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    .page-hero::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(27,67,50,0.22) 1px, transparent 1px); background-size: 28px 28px; pointer-events: none; }
+    .hero-inner { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .hero-text {}
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(27,67,50,0.18); border: 1px solid rgba(27,67,50,0.35); padding: 5px 14px; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--accent-lit); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+    .hero-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(26px, 6vw, 40px); line-height: 1.1; margin-bottom: 8px; }
+    .hero-title span { color: var(--accent-lit); }
+    .hero-sub { font-family: 'DM Sans', sans-serif; font-size: 13.5px; color: var(--text-dim); line-height: 1.6; max-width: 420px; }
+    .btn-edit-profile { background: rgba(27,67,50,0.15); border: 1px solid rgba(27,67,50,0.3); color: var(--accent-lit); padding: 9px 16px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; cursor: pointer; transition: var(--ease); white-space: nowrap; flex-shrink: 0; display: none; }
+    .btn-edit-profile:hover { background: rgba(27,67,50,0.28); }
+    .btn-edit-profile.visible { display: block; }
+
+    /* FEED */
+    .feed-wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px 120px; }
+
+    /* LIVE BADGE */
+    .live-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .live-dot { width: 8px; height: 8px; background: #22C55E; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .live-txt { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; }
+    .live-count { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--accent-lit); }
+
+    /* POST CARD */
+    .post-card { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--accent); margin-bottom: 14px; overflow: hidden; transition: border-color var(--ease); }
+    .post-card:hover { border-color: rgba(45,106,79,0.5); border-left-color: var(--accent-lit); }
+
+    .post-head { padding: 14px 14px 10px; display: flex; align-items: center; gap: 10px; }
+    .post-avatar { width: 38px; height: 38px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; color: var(--text); flex-shrink: 0; border-radius: 50%; }
+    .post-meta { flex: 1; min-width: 0; }
+    .post-biz { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13.5px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .post-time { font-family: 'Space Mono', monospace; font-size: 9.5px; color: var(--text-dim); letter-spacing: 0.06em; margin-top: 2px; }
+
+    .post-body { padding: 0 14px 12px; }
+    .post-text { font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); line-height: 1.65; word-break: break-word; white-space: pre-wrap; }
+
+    .post-media { width: 100%; max-height: 400px; display: block; object-fit: cover; cursor: pointer; margin-top: 10px; }
+    .post-video { width: 100%; max-height: 360px; display: block; background: #000; margin-top: 10px; }
+
+    .post-foot { padding: 10px 14px 14px; border-top: 1px solid rgba(240,237,230,0.05); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .post-expire { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.06em; }
+    .btn-wa { display: inline-flex; align-items: center; gap: 7px; background: #1a6632; border: none; color: #fff; padding: 9px 16px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; transition: var(--ease); }
+    .btn-wa:hover { background: #22803e; }
+
+    /* SKELETON */
+    .skeleton { background: linear-gradient(90deg, var(--bg-card) 25%, rgba(27,67,50,0.07) 50%, var(--bg-card) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border: 1px solid var(--border); height: 160px; margin-bottom: 14px; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* STATES */
+    .state-box { text-align: center; padding: 64px 20px; }
+    .state-icon { font-size: 44px; margin-bottom: 14px; opacity: 0.3; }
+    .state-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); margin-bottom: 8px; }
+    .state-sub { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text-dim); line-height: 1.6; max-width: 280px; margin: 0 auto 20px; }
+    .btn-state { background: var(--accent); border: none; color: var(--text); padding: 11px 24px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--ease); }
+    .btn-state:hover { background: var(--accent-lit); }
+
+    /* FLOATING POST BUTTON */
+    .fab { position: fixed; bottom: 28px; right: 20px; z-index: 80; width: 56px; height: 56px; background: var(--accent); border: none; color: var(--text); border-radius: 50%; font-size: 26px; cursor: pointer; box-shadow: 0 4px 24px rgba(27,67,50,0.55); transition: var(--ease); display: flex; align-items: center; justify-content: center; }
+    .fab:hover { background: var(--accent-lit); transform: scale(1.08); }
+
+    /* BOTTOM SHEET */
+    .sheet-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 300; opacity: 0; pointer-events: none; transition: var(--ease); }
+    .sheet-mask.on { opacity: 1; pointer-events: all; }
+    .sheet { position: fixed; bottom: 0; left: 0; right: 0; background: #0e0e0e; border-top: 1px solid var(--border); border-radius: 16px 16px 0 0; z-index: 400; transform: translateY(100%); transition: var(--ease); max-height: 90vh; overflow-y: auto; }
+    .sheet.on { transform: translateY(0); }
+    .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 0; }
+    .sheet-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .sheet-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; color: var(--text); }
+    .sheet-close { background: none; border: none; color: var(--text-dim); font-size: 20px; cursor: pointer; padding: 4px; }
+    .sheet-body { padding: 16px 18px 24px; }
+    .compose-name { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--accent-lit); letter-spacing: 0.1em; margin-bottom: 10px; }
+    .compose-area { width: 100%; background: rgba(240,237,230,0.04); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; min-height: 100px; resize: none; outline: none; transition: border-color var(--ease); line-height: 1.6; }
+    .compose-area:focus { border-color: var(--accent); }
+    .compose-area::placeholder { color: var(--text-dim); }
+    .compose-preview { margin-top: 10px; position: relative; }
+    .compose-preview img, .compose-preview video { width: 100%; max-height: 220px; object-fit: cover; border: 1px solid var(--border); display: block; }
+    .compose-remove { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sheet-actions { display: flex; gap: 10px; margin-top: 14px; align-items: center; flex-wrap: wrap; }
+    .btn-attach { background: rgba(27,67,50,0.15); border: 1px solid rgba(27,67,50,0.3); color: var(--accent-lit); padding: 10px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--ease); display: flex; align-items: center; gap: 7px; }
+    .btn-attach:hover { background: rgba(27,67,50,0.28); }
+    .btn-post { background: var(--accent); border: none; color: var(--text); padding: 11px 24px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: var(--ease); margin-left: auto; }
+    .btn-post:hover { background: var(--accent-lit); }
+    .btn-post.busy { opacity: 0.55; pointer-events: none; }
+    .attach-hint { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.06em; width: 100%; margin-top: 6px; }
+
+    /* PROFILE MODAL */
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-mask.on { display: flex; }
+    .modal { background: #0e0e0e; border: 1px solid var(--border); border-top: 3px solid var(--accent); padding: 28px 24px; width: 100%; max-width: 400px; }
+    .modal-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; color: var(--text); margin-bottom: 6px; }
+    .modal-sub { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text-dim); margin-bottom: 22px; line-height: 1.5; }
+    .modal-field { margin-bottom: 14px; }
+    .modal-field label { display: block; font-family: 'Space Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 7px; }
+    .modal-inp { width: 100%; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color var(--ease); }
+    .modal-inp:focus { border-color: var(--accent); }
+    .modal-inp::placeholder { color: var(--text-dim); font-size: 12px; }
+    .modal-hint { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text-dim); margin-top: 5px; letter-spacing: 0.05em; }
+    .btn-modal-save { width: 100%; background: var(--accent); border: none; color: var(--text); padding: 13px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: var(--ease); margin-top: 6px; }
+    .btn-modal-save:hover { background: var(--accent-lit); }
+
+    /* LIGHTBOX */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 999; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 16px; }
+    .lightbox.on { display: flex; }
+    .lightbox-close { position: absolute; top: 14px; right: 14px; background: var(--accent); border: none; color: var(--text); width: 40px; height: 40px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; }
+
+    /* FOOTER */
+    .footer { background: #050505; border-top: 1px solid var(--border); padding: 48px 20px 32px; }
+    .ft-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+    .ft-brand img { height: 40px; width: 40px; object-fit: contain; }
+    .ft-site-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; color: var(--text); }
+    .ft-motto { font-family: 'Space Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; color: var(--accent-lit); margin-top: 3px; }
+    .ft-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 18px; margin-bottom: 30px; }
+    .ft-links a { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-dim); text-decoration: none; padding: 3px 0; transition: var(--ease); }
+    .ft-links a:hover { color: var(--accent-lit); }
+    .ft-rule { height: 1px; background: var(--border); margin-bottom: 22px; }
+    .ft-credit { font-family: 'Space Mono', monospace; font-size: 9.5px; color: var(--text-dim); line-height: 2; letter-spacing: 0.04em; }
+    .ft-credit strong { color: var(--accent-lit); }
+    @media (min-width: 480px) { .ft-links { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 768px) { .page-hero { padding: 52px 40px 40px; } .feed-wrap { padding: 28px 40px 120px; } .footer { padding: 56px 40px 40px; } .fab { bottom: 36px; right: 32px; } }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Open menu" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="topbar-brand" href="/nastestpi25-26study/">
+    <div class="topbar-logos">
+      <img class="lg-nastes" src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES Logo">
+      <img class="lg-poly" src="/nastestpi25-26study/icons/polytechnic-logo.png" alt="Polytechnic Ibadan">
+    </div>
+    <div class="topbar-name">NASTES RESEARCH HUB<em>POLYTECHNIC IBADAN</em></div>
+  </a>
+</header>
+
+<div class="nav-mask" id="navMask" onclick="toggleNav()"></div>
+
+<nav class="sidenav" id="sidenav">
+  <div class="sn-head">
+    <img class="lg-nastes" src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES">
+    <img class="lg-poly" src="/nastestpi25-26study/icons/polytechnic-logo.png" alt="Polytechnic Ibadan">
+    <div class="sn-head-title">NASTES RESEARCH HUB</div>
+  </div>
+  <div class="sn-links">
+    <a href="/nastestpi25-26study/"><span class="ni">🏠</span> Home</a>
+    <a href="/nastestpi25-26study/Pages/gp-calculator.html"><span class="ni">🎓</span> GP Calculator</a>
+    <a href="/nastestpi25-26study/Pages/past-questions.html"><span class="ni">📄</span> Past Questions</a>
+    <a href="/nastestpi25-26study/Pages/study-quiz.html"><span class="ni">🧪</span> Study and Quiz</a>
+    <a href="/nastestpi25-26study/Pages/departments.html"><span class="ni">🏛️</span> Departments</a>
+    <a href="/nastestpi25-26study/Pages/marketplace.html" class="active"><span class="ni">🛒</span> Student Marketplace</a>
+    <a href="/nastestpi25-26study/Pages/academic-calendar.html"><span class="ni">📅</span> Academic Calendar</a>
+    <a href="/nastestpi25-26study/Pages/news-events.html"><span class="ni">📢</span> News and Events</a>
+    <a href="/nastestpi25-26study/Pages/about.html"><span class="ni">ℹ️</span> About NASTES</a>
+    <div class="sn-rule"></div>
+    <a href="/nastestpi25-26study/#contact"><span class="ni">✉️</span> Contact Us</a>
+    <div class="sn-rule"></div>
+    <a href="/nastestpi25-26study/Pages/admin.html" class="admin-lnk"><span class="ni">⚙️</span> Admin</a>
+  </div>
+  <div class="sn-foot">
+    <p><strong>Adeniji Habeeb Adewale</strong><br>President, NASTES TPI Chapter 25/26<br>Era of Unity and Advancement</p>
+  </div>
+</nav>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lbImg" src="" alt="">
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-mask" id="profileModal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Set Up Your Business</div>
+    <div class="modal-sub" id="modalSub">This is your marketplace identity. Everyone will see this name when you post. You can change it anytime.</div>
+    <div class="modal-field">
+      <label for="inputBizName">Business Name</label>
+      <input class="modal-inp" type="text" id="inputBizName" placeholder="e.g. Bisi Fabrics, Tunde Prints...">
+    </div>
+    <div class="modal-field">
+      <label for="inputWA">WhatsApp Number</label>
+      <input class="modal-inp" type="tel" id="inputWA" placeholder="e.g. 08012345678">
+      <div class="modal-hint">Enter your Nigerian number. Buyers will contact you on WhatsApp.</div>
+    </div>
+    <button class="btn-modal-save" onclick="saveProfile()">Save and Continue</button>
+  </div>
+</div>
+
+<!-- COMPOSE BOTTOM SHEET -->
+<div class="sheet-mask" id="sheetMask" onclick="closeSheet()"></div>
+<div class="sheet" id="composeSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div class="sheet-title">New Post</div>
+    <button class="sheet-close" onclick="closeSheet()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="compose-name" id="composeName">Posting as —</div>
+    <textarea class="compose-area" id="composeText" placeholder="What are you selling, offering or looking for? Write here..."></textarea>
+    <div class="compose-preview" id="composePreview" style="display:none">
+      <img id="previewImg" src="" alt="" style="display:none">
+      <video id="previewVid" controls style="display:none; width:100%; max-height:220px;"></video>
+      <button class="compose-remove" onclick="removeAttachment()">✕</button>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn-attach" onclick="triggerAttach()">📎 Add Photo or Video</button>
+      <div class="attach-hint">Max 50MB. Images and videos only.</div>
+      <button class="btn-post" id="btnPost" onclick="submitPost()">Post →</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*,video/*" style="display:none" onchange="onFileChosen()">
+
+<!-- FAB -->
+<button class="fab" onclick="openCompose()" aria-label="New post">+</button>
+
+<main>
+  <div class="page-hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-badge">🛒 Student Marketplace</div>
+        <h1 class="hero-title">Student <span>Marketplace</span></h1>
+        <p class="hero-sub">Buy, sell and swap with fellow NASTES students. Post lasts 48 hours. Tap the + button to post.</p>
+      </div>
+      <button class="btn-edit-profile" id="btnEditProfile" onclick="openEditProfile()">✏ Edit Profile</button>
+    </div>
+  </div>
+
+  <div class="feed-wrap">
+    <div class="live-row">
+      <div class="live-dot"></div>
+      <div class="live-txt">Live Feed</div>
+      <div class="live-count" id="liveCount"></div>
+    </div>
+    <div id="feedContainer">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="ft-brand">
+      <img src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES Logo">
+      <div>
+        <div class="ft-site-name">NASTES RESEARCH HUB</div>
+        <div class="ft-motto">Technology For Human Advancement</div>
+      </div>
+    </div>
+    <div class="ft-links">
+      <a href="/nastestpi25-26study/">Home</a>
+      <a href="/nastestpi25-26study/Pages/gp-calculator.html">GP Calculator</a>
+      <a href="/nastestpi25-26study/Pages/past-questions.html">Past Questions</a>
+      <a href="/nastestpi25-26study/Pages/study-quiz.html">Study and Quiz</a>
+      <a href="/nastestpi25-26study/Pages/departments.html">Departments</a>
+      <a href="/nastestpi25-26study/Pages/marketplace.html">Student Marketplace</a>
+      <a href="/nastestpi25-26study/Pages/academic-calendar.html">Academic Calendar</a>
+      <a href="/nastestpi25-26study/Pages/news-events.html">News and Events</a>
+      <a href="/nastestpi25-26study/Pages/about.html">About NASTES</a>
+      <a href="/nastestpi25-26study/#contact">Contact Us</a>
+      <a href="/nastestpi25-26study/Pages/admin.html">Admin</a>
+    </div>
+    <div class="ft-rule"></div>
+    <div class="ft-credit">
+      <strong>NASTES TPI Chapter 25/26</strong><br>
+      Era of Unity and Advancement<br>
+      President: <strong>Adeniji Habeeb Adewale</strong><br>
+      The Polytechnic Ibadan &nbsp;·&nbsp; 2025/2026
+    </div>
+  </footer>
+</main>
+
+<script>
+  var SB_URL    = 'https://ixsmyvwuavlxxywzgujn.supabase.co';
+  var SB_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4c215dnd1YXZseHh5d3pndWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjAxMDAsImV4cCI6MjA5ODMzNjEwMH0.U2R4PB-YRdpE7NTYCheeh_G9insrmMxKk_PA1TKSVZM';
+  var BUCKET    = 'marketplace-files';
+  var TABLE     = 'marketplace_posts';
+  var EXPIRY_MS = 48 * 60 * 60 * 1000;
+
+  var profile    = null;
+  var chosenFile = null;
+  var afterProfileCb = null;
+
+  /* ── HEADERS ── */
+  function hdrs(extra) {
+    var h = { 'Authorization': 'Bearer ' + SB_KEY, 'apikey': SB_KEY, 'Content-Type': 'application/json' };
+    if (extra) Object.keys(extra).forEach(function(k){ h[k] = extra[k]; });
+    return h;
+  }
+
+  /* ── NAV ── */
+  function toggleNav() {
+    var nav  = document.getElementById('sidenav');
+    var mask = document.getElementById('navMask');
+    var b    = document.getElementById('burger');
+    nav.classList.toggle('on');
+    mask.classList.toggle('on');
+    b.classList.toggle('open');
+    document.body.style.overflow = nav.classList.contains('on') ? 'hidden' : '';
+  }
+
+  /* ── PROFILE ── */
+  function loadProfile() {
+    var raw = localStorage.getItem('nastes_mkt_profile');
+    if (raw) {
+      try { profile = JSON.parse(raw); } catch(e) { profile = null; }
+    }
+    if (profile && profile.name) {
+      document.getElementById('btnEditProfile').classList.add('visible');
+    }
+  }
+
+  function openEditProfile() {
+    document.getElementById('modalTitle').textContent = 'Edit Your Profile';
+    document.getElementById('modalSub').textContent   = 'Update your business name or WhatsApp number.';
+    if (profile) {
+      document.getElementById('inputBizName').value = profile.name || '';
+      document.getElementById('inputWA').value      = profile.wa   || '';
+    }
+    document.getElementById('profileModal').classList.add('on');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function saveProfile() {
+    var name = document.getElementById('inputBizName').value.trim();
+    var wa   = document.getElementById('inputWA').value.trim();
+    if (!name) { alert('Please enter your business name.'); return; }
+    if (!wa)   { alert('Please enter your WhatsApp number.'); return; }
+    profile = { name: name, wa: formatWA(wa) };
+    localStorage.setItem('nastes_mkt_profile', JSON.stringify(profile));
+    document.getElementById('btnEditProfile').classList.add('visible');
+    document.getElementById('profileModal').classList.remove('on');
+    document.body.style.overflow = '';
+    if (afterProfileCb) { afterProfileCb(); afterProfileCb = null; }
+  }
+
+  function formatWA(num) {
+    var n = num.replace(/\D/g,'');
+    if (n.startsWith('0') && n.length === 11) n = '234' + n.slice(1);
+    return n;
+  }
+
+  /* ── COMPOSE ── */
+  function openCompose() {
+    if (!profile || !profile.name) {
+      afterProfileCb = openCompose;
+      document.getElementById('modalTitle').textContent = 'Set Up Your Business';
+      document.getElementById('modalSub').textContent   = 'This is your marketplace identity. Everyone will see this name when you post.';
+      document.getElementById('inputBizName').value = '';
+      document.getElementById('inputWA').value      = '';
+      document.getElementById('profileModal').classList.add('on');
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+    document.getElementById('composeName').textContent = 'Posting as ' + profile.name;
+    document.getElementById('composeText').value = '';
+    removeAttachment();
+    document.getElementById('sheetMask').classList.add('on');
+    document.getElementById('composeSheet').classList.add('on');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSheet() {
+    document.getElementById('sheetMask').classList.remove('on');
+    document.getElementById('composeSheet').classList.remove('on');
+    document.body.style.overflow = '';
+  }
+
+  function triggerAttach() {
+    document.getElementById('fileInput').click();
+  }
+
+  function onFileChosen() {
+    var f = document.getElementById('fileInput').files[0];
+    if (!f) return;
+    if (f.size > 50 * 1024 * 1024) { alert('File is too large. Maximum size is 50MB.'); return; }
+    chosenFile = f;
+    var url = URL.createObjectURL(f);
+    var isImg = f.type.startsWith('image/');
+    document.getElementById('previewImg').style.display = isImg ? 'block' : 'none';
+    document.getElementById('previewVid').style.display = isImg ? 'none'  : 'block';
+    if (isImg) document.getElementById('previewImg').src = url;
+    else        document.getElementById('previewVid').src = url;
+    document.getElementById('composePreview').style.display = 'block';
+  }
+
+  function removeAttachment() {
+    chosenFile = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('previewImg').src  = '';
+    document.getElementById('previewVid').src  = '';
+    document.getElementById('previewImg').style.display = 'none';
+    document.getElementById('previewVid').style.display = 'none';
+    document.getElementById('composePreview').style.display = 'none';
+  }
+
+  /* ── SUBMIT POST ── */
+  function submitPost() {
+    var text = document.getElementById('composeText').value.trim();
+    if (!text && !chosenFile) { alert('Write something or attach a file before posting.'); return; }
+    var btn = document.getElementById('btnPost');
+    btn.classList.add('busy');
+    btn.textContent = 'Posting...';
+
+    if (chosenFile) {
+      uploadFile(chosenFile, function(url, type) {
+        insertPost(text, url, type, btn);
+      }, function() {
+        btn.classList.remove('busy');
+        btn.textContent = 'Post →';
+        alert('File upload failed. Try again or post without attachment.');
+      });
+    } else {
+      insertPost(text, null, null, btn);
+    }
+  }
+
+  function uploadFile(file, onSuccess, onError) {
+    var ext      = file.name.split('.').pop();
+    var filename = Date.now() + '_' + Math.random().toString(36).substr(2,6) + '.' + ext;
+    fetch(SB_URL + '/storage/v1/object/' + BUCKET + '/' + filename, {
+      method:  'POST',
+      headers: { 'Authorization': 'Bearer ' + SB_KEY, 'apikey': SB_KEY, 'Content-Type': file.type },
+      body:    file
+    })
+    .then(function(r){ if (!r.ok) throw new Error('upload failed'); return r.json(); })
+    .then(function(){
+      var url = SB_URL + '/storage/v1/object/public/' + BUCKET + '/' + filename;
+      onSuccess(url, file.type.startsWith('image/') ? 'image' : 'video');
+    })
+    .catch(onError);
+  }
+
+  function insertPost(text, fileUrl, fileType, btn) {
+    var record = {
+      business_name: profile.name,
+      whatsapp:      profile.wa,
+      content:       text || null,
+      file_url:      fileUrl  || null,
+      file_type:     fileType || null
+    };
+    fetch(SB_URL + '/rest/v1/' + TABLE, {
+      method:  'POST',
+      headers: hdrs({ 'Prefer': 'return=minimal' }),
+      body:    JSON.stringify(record)
+    })
+    .then(function(r){
+      if (!r.ok) throw new Error('insert failed');
+      btn.classList.remove('busy');
+      btn.textContent = 'Post →';
+      closeSheet();
+      loadFeed();
+    })
+    .catch(function(){
+      btn.classList.remove('busy');
+      btn.textContent = 'Post →';
+      alert('Could not post. Please try again.');
+    });
+  }
+
+  /* ── CLEANUP EXPIRED POSTS ── */
+  function cleanupExpired() {
+    var cutoff = new Date(Date.now() - EXPIRY_MS).toISOString();
+    fetch(SB_URL + '/rest/v1/' + TABLE + '?created_at=lt.' + cutoff, {
+      method:  'DELETE',
+      headers: hdrs()
+    }).catch(function(){});
+  }
+
+  /* ── LOAD FEED ── */
+  function loadFeed() {
+    showSkeleton();
+    fetch(SB_URL + '/rest/v1/' + TABLE + '?select=*&order=created_at.desc&limit=100', {
+      headers: { 'Authorization': 'Bearer ' + SB_KEY, 'apikey': SB_KEY }
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!Array.isArray(data)) { showError(); return; }
+      renderFeed(data);
+    })
+    .catch(function(){ showError(); });
+  }
+
+  /* ── RENDER FEED ── */
+  function renderFeed(posts) {
+    document.getElementById('liveCount').textContent = posts.length + ' post' + (posts.length !== 1 ? 's' : '');
+    if (!posts.length) { showEmpty(); return; }
+
+    var html = '';
+    posts.forEach(function(p){
+      var initial  = (p.business_name || 'A').charAt(0).toUpperCase();
+      var timeAgo  = getTimeAgo(p.created_at);
+      var expireIn = getExpireIn(p.created_at);
+      var waLink   = 'https://wa.me/' + (p.whatsapp || '');
+      var safeUri  = esc(p.file_url || '');
+
+      html +=
+        '<div class="post-card" id="post-' + p.id + '">' +
+          '<div class="post-head">' +
+            '<div class="post-avatar">' + escHtml(initial) + '</div>' +
+            '<div class="post-meta">' +
+              '<div class="post-biz">' + escHtml(p.business_name || 'Anonymous') + '</div>' +
+              '<div class="post-time">' + timeAgo + '</div>' +
+            '</div>' +
+          '</div>' +
+          (p.content ? '<div class="post-body"><div class="post-text">' + escHtml(p.content) + '</div></div>' : '') +
+          (p.file_url && p.file_type === 'image'
+            ? '<img class="post-media" src="' + escHtml(p.file_url) + '" alt="Post image" loading="lazy" onclick="openLightbox(\'' + safeUri + '\')">'
+            : '') +
+          (p.file_url && p.file_type === 'video'
+            ? '<video class="post-video" src="' + escHtml(p.file_url) + '" controls playsinline preload="metadata"></video>'
+            : '') +
+          '<div class="post-foot">' +
+            '<div class="post-expire">Expires ' + expireIn + '</div>' +
+            '<a class="btn-wa" href="' + waLink + '" target="_blank" rel="noopener">💬 Chat on WhatsApp</a>' +
+          '</div>' +
+        '</div>';
+    });
+
+    document.getElementById('feedContainer').innerHTML = html;
+  }
+
+  /* ── TIME HELPERS ── */
+  function getTimeAgo(ts) {
+    var diff = Date.now() - new Date(ts).getTime();
+    var m = Math.floor(diff / 60000);
+    if (m < 1)  return 'Just now';
+    if (m < 60) return m + ' minute' + (m > 1 ? 's' : '') + ' ago';
+    var h = Math.floor(m / 60);
+    if (h < 24) return h + ' hour' + (h > 1 ? 's' : '') + ' ago';
+    return Math.floor(h / 24) + ' day(s) ago';
+  }
+
+  function getExpireIn(ts) {
+    var expireAt = new Date(ts).getTime() + EXPIRY_MS;
+    var diff     = expireAt - Date.now();
+    if (diff <= 0) return 'soon';
+    var h = Math.floor(diff / 3600000);
+    if (h < 1) return 'in less than an hour';
+    return 'in ' + h + ' hour' + (h > 1 ? 's' : '');
+  }
+
+  /* ── LIGHTBOX ── */
+  function openLightbox(src) {
+    document.getElementById('lbImg').src = src;
+    document.getElementById('lightbox').classList.add('on');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('on');
+    document.getElementById('lbImg').src = '';
+    document.body.style.overflow = '';
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e){ if (e.target === this) closeLightbox(); });
+
+  /* ── STATES ── */
+  function showSkeleton() {
+    var h = '';
+    for (var i = 0; i < 3; i++) h += '<div class="skeleton"></div>';
+    document.getElementById('feedContainer').innerHTML = h;
+  }
+  function showEmpty() {
+    document.getElementById('feedContainer').innerHTML =
+      '<div class="state-box">' +
+        '<div class="state-icon">🛒</div>' +
+        '<div class="state-title">Marketplace is empty</div>' +
+        '<p class="state-sub">Be the first to post. Tap the + button to list what you are selling or offering.</p>' +
+        '<button class="btn-state" onclick="openCompose()">Post Something</button>' +
+      '</div>';
+  }
+  function showError() {
+    document.getElementById('feedContainer').innerHTML =
+      '<div class="state-box"><div class="state-icon">⚠️</div><div class="state-title">Could not load posts</div><p class="state-sub">Check your connection and refresh the page.</p></div>';
+  }
+
+  /* ── HELPERS ── */
+  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function esc(s)     { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+  /* ── INIT ── */
+  loadProfile();
+  cleanupExpired();
+  loadFeed();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/nastestpi25-26study/sw.js');
+  }
+</script>
+
+</body>
+</html>
