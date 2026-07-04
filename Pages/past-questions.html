@@ -1,1 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Past Questions | NASTES Research Hub</title>
+  <meta name="description" content="Access past exam questions for all departments under NASTES at The Polytechnic Ibadan.">
 
+  <link rel="manifest" href="/nastestpi25-26study/manifest.json">
+  <meta name="theme-color" content="#1B4332">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="/nastestpi25-26study/icons/icon-192.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080808; --bg-mid: #111111; --bg-card: #161616;
+      --border: #222222; --text: #F0EDE6; --text-dim: #B8B5AF;
+      --accent: #1B4332; --accent-lit: #2D6A4F;
+      --ease: 0.3s cubic-bezier(0.4,0,0.2,1); --nav-h: 60px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      width: 100%;
+    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+    ::selection { background: var(--accent); color: var(--text); }
+
+    /* TOPBAR */
+    .topbar {
+      position: fixed; inset: 0 0 auto 0; height: var(--nav-h);
+      background: rgba(8,8,8,0.94); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 16px;
+      z-index: 100; gap: 10px;
+      width: 100%; overflow: hidden;
+    }
+    .burger { background: none; border: none; cursor: pointer; padding: 8px 6px; display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+    .burger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 1px; transition: var(--ease); }
+    .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .topbar-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; flex: 1; min-width: 0; overflow: hidden; }
+    .topbar-logos { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .topbar-logos .lg-nastes { height: 34px; width: 34px; object-fit: contain; }
+    .topbar-logos .lg-poly { height: 26px; width: 26px; object-fit: contain; opacity: 0.82; }
+    .topbar-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12.5px; letter-spacing: 0.07em; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar-name em { display: block; font-style: normal; font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: 0.14em; color: var(--accent-lit); font-weight: 400; margin-top: 2px; }
+
+    /* SIDE NAV */
+    .nav-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 150; opacity: 0; pointer-events: none; transition: var(--ease); }
+    .nav-mask.on { opacity: 1; pointer-events: all; }
+    .sidenav { position: fixed; top: 0; left: 0; bottom: 0; width: 276px; max-width: 84vw; background: #0c0c0c; border-right: 1px solid var(--border); z-index: 200; transform: translateX(-100%); transition: var(--ease); display: flex; flex-direction: column; overflow-y: auto; }
+    .sidenav.on { transform: translateX(0); }
+    .sn-head { padding: 18px 18px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .sn-head .lg-nastes { height: 38px; width: 38px; object-fit: contain; }
+    .sn-head .lg-poly { height: 28px; width: 28px; object-fit: contain; opacity: 0.8; }
+    .sn-head-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.04em; line-height: 1.3; }
+    .sn-links { flex: 1; padding: 10px 0; }
+    .sn-links a { display: flex; align-items: center; gap: 11px; padding: 11px 18px; color: var(--text-dim); text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 500; border-left: 3px solid transparent; transition: var(--ease); }
+    .sn-links a:hover, .sn-links a.active { color: var(--text); background: rgba(27,67,50,0.13); border-left-color: var(--accent); }
+    .sn-links a .ni { font-size: 15px; width: 19px; text-align: center; flex-shrink: 0; }
+    .sn-rule { height: 1px; background: var(--border); margin: 7px 18px; }
+    .sn-links a.admin-lnk { color: var(--accent-lit); }
+    .sn-links a.admin-lnk:hover { color: var(--text); background: rgba(27,67,50,0.2); }
+    .sn-foot { padding: 14px 18px; border-top: 1px solid var(--border); }
+    .sn-foot p { font-family: 'Space Mono', monospace; font-size: 9.5px; color: var(--text-dim); line-height: 1.75; letter-spacing: 0.02em; }
+    .sn-foot strong { color: var(--accent-lit); }
+
+    main { padding-top: var(--nav-h); width: 100%; overflow-x: hidden; }
+
+    /* PAGE HERO */
+    .page-hero { padding: 48px 20px 40px; background: linear-gradient(160deg, var(--bg) 0%, var(--bg-mid) 100%); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    .page-hero::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(27,67,50,0.22) 1px, transparent 1px); background-size: 28px 28px; pointer-events: none; }
+    .hero-inner { position: relative; z-index: 1; max-width: 600px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(27,67,50,0.18); border: 1px solid rgba(27,67,50,0.35); padding: 5px 14px; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--accent-lit); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+    .hero-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px, 7vw, 44px); line-height: 1.1; margin-bottom: 10px; }
+    .hero-title span { color: var(--accent-lit); }
+    .hero-sub { font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-dim); line-height: 1.65; }
+
+    /* FILTERS */
+    .filters-wrap { background: var(--bg-mid); border-bottom: 1px solid var(--border); padding: 18px 16px; position: sticky; top: var(--nav-h); z-index: 50; width: 100%; overflow: hidden; }
+    .search-box { position: relative; margin-bottom: 14px; width: 100%; }
+    .search-box input { width: 100%; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); padding: 10px 36px 10px 38px; font-family: 'DM Sans', sans-serif; font-size: 13.5px; outline: none; transition: border-color var(--ease); }
+    .search-box input:focus { border-color: var(--accent); }
+    .search-box input::placeholder { color: var(--text-dim); }
+    .s-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 14px; pointer-events: none; }
+    .s-clear { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 15px; display: none; padding: 4px; }
+    .s-clear:hover { color: var(--text); }
+    .filter-label { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 7px; }
+    .dept-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .dept-tab { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; padding: 7px 12px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; transition: var(--ease); white-space: nowrap; }
+    .dept-tab:hover { border-color: var(--accent-lit); color: var(--text); }
+    .dept-tab.active { background: var(--accent); border-color: var(--accent); color: var(--text); }
+    .level-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .level-tab { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; padding: 6px 12px; background: rgba(27,67,50,0.1); border: 1px solid rgba(27,67,50,0.25); color: var(--accent-lit); cursor: pointer; transition: var(--ease); letter-spacing: 0.05em; }
+    .level-tab:hover { background: rgba(27,67,50,0.22); border-color: var(--accent-lit); }
+    .level-tab.active { background: var(--accent); border-color: var(--accent); color: var(--text); }
+
+    /* RESULTS */
+    .results-wrap { width: 100%; max-width: 900px; margin: 0 auto; padding: 22px 16px 80px; overflow-x: hidden; }
+    .status-row { margin-bottom: 16px; }
+    .status-txt { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; }
+    .status-txt strong { color: var(--accent-lit); }
+    .q-grid { display: grid; gap: 10px; width: 100%; }
+
+    /* QUESTION CARD — stacked layout, zero horizontal overflow */
+    .q-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: var(--ease);
+      width: 100%;
+      overflow: hidden;
+    }
+    .q-card:hover { border-color: var(--accent-lit); border-left-color: var(--accent-lit); box-shadow: 0 4px 20px rgba(27,67,50,0.18); }
+
+    .q-card-top { display: flex; align-items: flex-start; gap: 12px; width: 100%; min-width: 0; }
+    .q-icon { width: 40px; height: 40px; background: rgba(27,67,50,0.18); border: 1px solid rgba(27,67,50,0.3); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .q-info { flex: 1; min-width: 0; }
+    .q-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; word-break: break-word; line-height: 1.4; }
+    .q-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+    .q-badge { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 7px; background: rgba(27,67,50,0.15); border: 1px solid rgba(27,67,50,0.25); color: var(--accent-lit); white-space: nowrap; }
+
+    /* Buttons always on their own full-width row */
+    .q-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+    }
+    .btn-view {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent-lit);
+      padding: 10px 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--ease);
+      text-align: center;
+      width: 100%;
+    }
+    .btn-view:hover { background: rgba(27,67,50,0.2); }
+    .btn-dl {
+      background: var(--accent);
+      border: none;
+      color: var(--text);
+      padding: 10px 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--ease);
+      text-align: center;
+      width: 100%;
+    }
+    .btn-dl:hover { background: var(--accent-lit); }
+    .btn-dl.busy { opacity: 0.5; pointer-events: none; }
+
+    /* SKELETON */
+    .skeleton { background: linear-gradient(90deg, var(--bg-card) 25%, rgba(27,67,50,0.07) 50%, var(--bg-card) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border: 1px solid var(--border); height: 110px; margin-bottom: 10px; width: 100%; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* STATES */
+    .state-box { text-align: center; padding: 64px 16px; }
+    .state-icon { font-size: 44px; margin-bottom: 14px; opacity: 0.3; }
+    .state-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); margin-bottom: 8px; }
+    .state-sub { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text-dim); line-height: 1.6; max-width: 280px; margin: 0 auto; }
+
+    /* LIGHTBOX — instant, no fetch */
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow: hidden;
+    }
+    .lightbox.on { display: flex; }
+    .lightbox-close {
+      position: absolute; top: 14px; right: 14px;
+      background: var(--accent); border: none; color: var(--text);
+      width: 40px; height: 40px; font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    .lightbox img {
+      max-width: 100%; max-height: 85vh;
+      object-fit: contain; display: block;
+    }
+    .lightbox-caption {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      color: var(--text-dim); text-align: center; margin-top: 10px;
+      letter-spacing: 0.08em; max-width: 100%;
+      word-break: break-word;
+    }
+    .lightbox-spinner {
+      font-size: 28px; animation: spin 1s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+    /* FOOTER */
+    .footer { background: #050505; border-top: 1px solid var(--border); padding: 48px 20px 32px; }
+    .ft-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+    .ft-brand img { height: 40px; width: 40px; object-fit: contain; }
+    .ft-site-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; color: var(--text); }
+    .ft-motto { font-family: 'Space Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; color: var(--accent-lit); margin-top: 3px; }
+    .ft-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 18px; margin-bottom: 30px; }
+    .ft-links a { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-dim); text-decoration: none; padding: 3px 0; transition: var(--ease); }
+    .ft-links a:hover { color: var(--accent-lit); }
+    .ft-rule { height: 1px; background: var(--border); margin-bottom: 22px; }
+    .ft-credit { font-family: 'Space Mono', monospace; font-size: 9.5px; color: var(--text-dim); line-height: 2; letter-spacing: 0.04em; }
+    .ft-credit strong { color: var(--accent-lit); }
+
+    @media (min-width: 480px) { .ft-links { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 600px) {
+      /* On wider screens, buttons go side by side inline with info */
+      .q-card { flex-direction: row; align-items: center; }
+      .q-card-top { flex: 1; }
+      .q-actions { grid-template-columns: auto auto; width: auto; flex-shrink: 0; }
+      .btn-view, .btn-dl { padding: 9px 16px; width: auto; }
+    }
+    @media (min-width: 768px) {
+      .page-hero { padding: 60px 40px 48px; }
+      .filters-wrap { padding: 18px 40px; }
+      .results-wrap { padding: 28px 40px 80px; }
+      .footer { padding: 56px 40px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Open menu" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="topbar-brand" href="/nastestpi25-26study/">
+    <div class="topbar-logos">
+      <img class="lg-nastes" src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES Logo">
+      <img class="lg-poly" src="/nastestpi25-26study/icons/polytechnic-logo.png" alt="Polytechnic Ibadan">
+    </div>
+    <div class="topbar-name">NASTES RESEARCH HUB<em>POLYTECHNIC IBADAN</em></div>
+  </a>
+</header>
+
+<div class="nav-mask" id="navMask" onclick="toggleNav()"></div>
+
+<nav class="sidenav" id="sidenav">
+  <div class="sn-head">
+    <img class="lg-nastes" src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES">
+    <img class="lg-poly" src="/nastestpi25-26study/icons/polytechnic-logo.png" alt="Polytechnic Ibadan">
+    <div class="sn-head-title">NASTES RESEARCH HUB</div>
+  </div>
+  <div class="sn-links">
+    <a href="/nastestpi25-26study/"><span class="ni">🏠</span> Home</a>
+    <a href="/nastestpi25-26study/Pages/gp-calculator.html"><span class="ni">🎓</span> GP Calculator</a>
+    <a href="/nastestpi25-26study/Pages/past-questions.html" class="active"><span class="ni">📄</span> Past Questions</a>
+    <a href="/nastestpi25-26study/Pages/study-quiz.html"><span class="ni">🧪</span> Study and Quiz</a>
+    <a href="/nastestpi25-26study/Pages/departments.html"><span class="ni">🏛️</span> Departments</a>
+    <a href="/nastestpi25-26study/Pages/marketplace.html"><span class="ni">🛒</span> Student Marketplace</a>
+    <a href="/nastestpi25-26study/Pages/academic-calendar.html"><span class="ni">📅</span> Academic Calendar</a>
+    <a href="/nastestpi25-26study/Pages/news-events.html"><span class="ni">📢</span> News and Events</a>
+    <a href="/nastestpi25-26study/Pages/about.html"><span class="ni">ℹ️</span> About NASTES</a>
+    <div class="sn-rule"></div>
+    <a href="/nastestpi25-26study/#contact"><span class="ni">✉️</span> Contact Us</a>
+    <div class="sn-rule"></div>
+    <a href="/nastestpi25-26study/Pages/admin.html" class="admin-lnk"><span class="ni">⚙️</span> Admin</a>
+  </div>
+  <div class="sn-foot">
+    <p><strong>Adeniji Habeeb Adewale</strong><br>President, NASTES TPI Chapter 25/26<br>Era of Unity and Advancement</p>
+  </div>
+</nav>
+
+<!-- LIGHTBOX — image loads directly from public URL, no fetch, instant -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-spinner" id="lbSpinner">⏳</div>
+  <img id="lightboxImg" src="" alt="Past Question" style="display:none">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<main>
+  <div class="page-hero">
+    <div class="hero-inner">
+      <div class="hero-badge">📄 Academic Resources</div>
+      <h1 class="hero-title">Past <span>Questions</span></h1>
+      <p class="hero-sub">Browse and download past exam questions across all departments under NASTES at The Polytechnic Ibadan.</p>
+    </div>
+  </div>
+
+  <div class="filters-wrap">
+    <div class="search-box">
+      <span class="s-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search by subject, code or year..." oninput="onSearch()">
+      <button class="s-clear" id="searchClear" onclick="clearSearch()">✕</button>
+    </div>
+    <div class="filter-label">Department</div>
+    <div class="dept-tabs">
+      <button class="dept-tab active" data-dept="all"       onclick="selectDept(this)">All</button>
+      <button class="dept-tab"        data-dept="physics"   onclick="selectDept(this)">Physics</button>
+      <button class="dept-tab"        data-dept="biology"   onclick="selectDept(this)">Biology</button>
+      <button class="dept-tab"        data-dept="chemistry" onclick="selectDept(this)">Chemistry</button>
+      <button class="dept-tab"        data-dept="slt"       onclick="selectDept(this)">SLT</button>
+      <button class="dept-tab"        data-dept="pharma"    onclick="selectDept(this)">Pharmaceutical Tech</button>
+    </div>
+    <div class="filter-label">Level</div>
+    <div class="level-tabs">
+      <button class="level-tab active" data-level="all"  onclick="selectLevel(this)">All Levels</button>
+      <button class="level-tab"        data-level="nd1"  onclick="selectLevel(this)">ND 1</button>
+      <button class="level-tab"        data-level="nd2"  onclick="selectLevel(this)">ND 2</button>
+      <button class="level-tab"        data-level="hnd1" onclick="selectLevel(this)">HND 1</button>
+      <button class="level-tab"        data-level="hnd2" onclick="selectLevel(this)">HND 2</button>
+    </div>
+  </div>
+
+  <div class="results-wrap">
+    <div class="status-row">
+      <div class="status-txt" id="statusTxt">Loading past questions...</div>
+    </div>
+    <div id="resultsContainer">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="ft-brand">
+      <img src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES Logo">
+      <div>
+        <div class="ft-site-name">NASTES RESEARCH HUB</div>
+        <div class="ft-motto">Technology For Human Advancement</div>
+      </div>
+    </div>
+    <div class="ft-links">
+      <a href="/nastestpi25-26study/">Home</a>
+      <a href="/nastestpi25-26study/Pages/gp-calculator.html">GP Calculator</a>
+      <a href="/nastestpi25-26study/Pages/past-questions.html">Past Questions</a>
+      <a href="/nastestpi25-26study/Pages/study-quiz.html">Study and Quiz</a>
+      <a href="/nastestpi25-26study/Pages/departments.html">Departments</a>
+      <a href="/nastestpi25-26study/Pages/marketplace.html">Student Marketplace</a>
+      <a href="/nastestpi25-26study/Pages/academic-calendar.html">Academic Calendar</a>
+      <a href="/nastestpi25-26study/Pages/news-events.html">News and Events</a>
+      <a href="/nastestpi25-26study/Pages/about.html">About NASTES</a>
+      <a href="/nastestpi25-26study/#contact">Contact Us</a>
+      <a href="/nastestpi25-26study/Pages/admin.html">Admin</a>
+    </div>
+    <div class="ft-rule"></div>
+    <div class="ft-credit">
+      <strong>NASTES TPI Chapter 25/26</strong><br>
+      Era of Unity and Advancement<br>
+      President: <strong>Adeniji Habeeb Adewale</strong><br>
+      The Polytechnic Ibadan &nbsp;·&nbsp; 2025/2026
+    </div>
+  </footer>
+</main>
+
+<script>
+  var NASTES_URL = 'https://ixsmyvwuavlxxywzgujn.supabase.co';
+  var NASTES_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4c215dnd1YXZseHh5d3pndWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjAxMDAsImV4cCI6MjA5ODMzNjEwMH0.U2R4PB-YRdpE7NTYCheeh_G9insrmMxKk_PA1TKSVZM';
+  var SLT_URL    = 'https://ayoofobsthcnqzguuxmm.supabase.co';
+  var SLT_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5b29mb2JzdGhjbnF6Z3V1eG1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MjQwODgsImV4cCI6MjA5NDUwMDA4OH0.AHK34Dmc3WiHloX3IYBJoLTqjDKHBp6lvrWfrrAVF_M';
+
+  var DEPT_META = {
+    physics:   { label:'Physics',                   icon:'⚛️',  levels:['hnd1','hnd2'] },
+    biology:   { label:'Biology',                   icon:'🧬',  levels:['hnd1','hnd2'] },
+    chemistry: { label:'Chemistry',                 icon:'🧪',  levels:['hnd1','hnd2'] },
+    slt:       { label:'Science Lab Technology',    icon:'🔬',  levels:['nd1','nd2']   },
+    pharma:    { label:'Pharmaceutical Technology', icon:'💊',  levels:['nd1','nd2']   }
+  };
+  var LEVEL_LABELS = { nd1:'ND 1', nd2:'ND 2', hnd1:'HND 1', hnd2:'HND 2' };
+
+  var activeDept  = 'all';
+  var activeLevel = 'all';
+  var searchQuery = '';
+  var allRecords  = [];
+
+  /* NAV */
+  function toggleNav() {
+    var nav  = document.getElementById('sidenav');
+    var mask = document.getElementById('navMask');
+    var b    = document.getElementById('burger');
+    nav.classList.toggle('on');
+    mask.classList.toggle('on');
+    b.classList.toggle('open');
+    document.body.style.overflow = nav.classList.contains('on') ? 'hidden' : '';
+  }
+
+  /* FETCH SLT */
+  function fetchSLT(level) {
+    var q = SLT_URL + '/rest/v1/past_questions?select=*&order=id.desc';
+    if (level !== 'all') q += '&level=eq.' + level;
+    return fetch(q, { headers:{ 'Authorization':'Bearer '+SLT_KEY, 'apikey':SLT_KEY } })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (!Array.isArray(data)) return [];
+        return data.map(function(r){
+          return { id:r.id, subject:r.subject||'Past Question', code:r.code||'', level:r.level||'', year:r.year||'', semester:r.semester||'', uri:r.uri||'', dept:'slt' };
+        });
+      });
+  }
+
+  /* FETCH NASTES (other depts) */
+  function fetchNASTES(dept, level) {
+    var q = NASTES_URL + '/rest/v1/past_questions?select=*&order=id.desc';
+    if (dept !== 'all' && dept !== 'slt') q += '&dept=eq.' + dept;
+    if (level !== 'all') q += '&level=eq.' + level;
+    return fetch(q, { headers:{ 'Authorization':'Bearer '+NASTES_KEY, 'apikey':NASTES_KEY } })
+      .then(function(r){ return r.json(); })
+      .then(function(data){ return Array.isArray(data) ? data : []; });
+  }
+
+  /* LOAD ALL */
+  function loadData(dept, level) {
+    showSkeleton();
+    var tasks = [];
+    if (dept === 'slt') {
+      tasks = [ fetchSLT(level) ];
+    } else if (dept === 'all') {
+      tasks = [ fetchSLT(level), fetchNASTES('all', level) ];
+    } else {
+      tasks = [ fetchNASTES(dept, level) ];
+    }
+    Promise.all(tasks)
+      .then(function(results){
+        allRecords = [];
+        results.forEach(function(arr){ allRecords = allRecords.concat(arr); });
+        renderRecords();
+      })
+      .catch(function(){ showError(); });
+  }
+
+  /* RENDER */
+  function renderRecords() {
+    var q = searchQuery.toLowerCase();
+    var list = allRecords.filter(function(r){
+      var ms = !q || (r.subject||'').toLowerCase().indexOf(q)>-1 || (r.code||'').toLowerCase().indexOf(q)>-1 || (r.year||'').indexOf(q)>-1;
+      var md = activeDept  === 'all' || r.dept  === activeDept;
+      var ml = activeLevel === 'all' || r.level === activeLevel;
+      return ms && md && ml;
+    });
+    updateStatus(list.length);
+    if (!list.length) { showEmpty(); return; }
+
+    var html = '<div class="q-grid">';
+    list.forEach(function(r){
+      var meta  = DEPT_META[r.dept] || { label:r.dept||'NASTES', icon:'📄' };
+      var lvlLb = LEVEL_LABELS[r.level] || r.level || '';
+      var isImg = r.uri && /\.(jpg|jpeg|png|webp|gif)$/i.test(r.uri.split('?')[0]);
+      var title = [r.code, r.subject].filter(Boolean).join(' — ') || 'Past Question';
+      var su = esc(r.uri||'');
+      var st = esc(title);
+
+      html +=
+        '<div class="q-card">' +
+          '<div class="q-card-top">' +
+            '<div class="q-icon">' + meta.icon + '</div>' +
+            '<div class="q-info">' +
+              '<div class="q-title">' + escHtml(title) + '</div>' +
+              '<div class="q-meta">' +
+                '<span class="q-badge">' + escHtml(meta.label) + '</span>' +
+                (lvlLb    ? '<span class="q-badge">' + escHtml(lvlLb)    + '</span>' : '') +
+                (r.year   ? '<span class="q-badge">' + escHtml(r.year)   + '</span>' : '') +
+                (r.semester ? '<span class="q-badge">' + escHtml(r.semester) + '</span>' : '') +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="q-actions">' +
+            (isImg
+              ? '<button class="btn-view" onclick="openLightbox(\'' + su + '\',\'' + st + '\')">👁 View</button>'
+              : '<button class="btn-view" onclick="window.open(\'' + su + '\',\'_blank\')">👁 View</button>') +
+            '<button class="btn-dl" onclick="downloadFile(\'' + su + '\',\'' + st + '\',this)">⬇ Download</button>' +
+          '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+    document.getElementById('resultsContainer').innerHTML = html;
+  }
+
+  /* LIGHTBOX — sets img src directly, browser loads instantly from public URL */
+  function openLightbox(uri, caption) {
+    var lb  = document.getElementById('lightbox');
+    var img = document.getElementById('lightboxImg');
+    var sp  = document.getElementById('lbSpinner');
+    var cap = document.getElementById('lightboxCaption');
+
+    img.style.display = 'none';
+    sp.style.display  = 'block';
+    cap.textContent   = caption;
+    lb.classList.add('on');
+    document.body.style.overflow = 'hidden';
+
+    img.onload = function() {
+      sp.style.display  = 'none';
+      img.style.display = 'block';
+    };
+    img.onerror = function() {
+      sp.style.display  = 'none';
+      cap.textContent   = 'Could not load image. Try the download button instead.';
+    };
+    img.src = uri;
+  }
+
+  function closeLightbox() {
+    var lb  = document.getElementById('lightbox');
+    var img = document.getElementById('lightboxImg');
+    lb.classList.remove('on');
+    img.src = '';
+    img.style.display = 'none';
+    document.getElementById('lbSpinner').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('lightbox').addEventListener('click', function(e){
+    if (e.target === this) closeLightbox();
+  });
+
+  /* DOWNLOAD — fetch → blob → createObjectURL */
+  function downloadFile(uri, name, btn) {
+    if (!uri) { alert('File URL not available.'); return; }
+    btn.classList.add('busy');
+    btn.textContent = '⏳ ...';
+    fetch(uri)
+      .then(function(r){ if (!r.ok) throw new Error('fail'); return r.blob(); })
+      .then(function(blob){
+        var ext = uri.split('?')[0].split('.').pop();
+        var a   = document.createElement('a');
+        a.href  = URL.createObjectURL(blob);
+        a.download = (name.replace(/[^a-zA-Z0-9 ]/g,'') || 'past-question') + '.' + ext;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+        btn.classList.remove('busy');
+        btn.textContent = '⬇ Download';
+      })
+      .catch(function(){
+        btn.classList.remove('busy');
+        btn.textContent = '⬇ Download';
+        alert('Download failed. Please try again.');
+      });
+  }
+
+  /* FILTERS */
+  function selectDept(el) {
+    document.querySelectorAll('.dept-tab').forEach(function(t){ t.classList.remove('active'); });
+    el.classList.add('active');
+    activeDept  = el.getAttribute('data-dept');
+    activeLevel = 'all';
+    document.querySelectorAll('.level-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelector('.level-tab[data-level="all"]').classList.add('active');
+    updateLevelVisibility();
+    loadData(activeDept, activeLevel);
+  }
+
+  function selectLevel(el) {
+    document.querySelectorAll('.level-tab').forEach(function(t){ t.classList.remove('active'); });
+    el.classList.add('active');
+    activeLevel = el.getAttribute('data-level');
+    loadData(activeDept, activeLevel);
+  }
+
+  function updateLevelVisibility() {
+    var show = activeDept === 'all' ? ['nd1','nd2','hnd1','hnd2'] : (DEPT_META[activeDept] ? DEPT_META[activeDept].levels : ['nd1','nd2','hnd1','hnd2']);
+    document.querySelectorAll('.level-tab[data-level]').forEach(function(t){
+      var lv = t.getAttribute('data-level');
+      if (lv === 'all') return;
+      t.style.display = show.indexOf(lv) > -1 ? 'inline-flex' : 'none';
+    });
+  }
+
+  /* SEARCH */
+  function onSearch() {
+    searchQuery = document.getElementById('searchInput').value;
+    document.getElementById('searchClear').style.display = searchQuery ? 'block' : 'none';
+    renderRecords();
+  }
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    searchQuery = '';
+    document.getElementById('searchClear').style.display = 'none';
+    renderRecords();
+  }
+
+  /* STATES */
+  function showSkeleton() {
+    var h = '';
+    for (var i = 0; i < 4; i++) h += '<div class="skeleton"></div>';
+    document.getElementById('resultsContainer').innerHTML = h;
+    document.getElementById('statusTxt').innerHTML = 'Loading past questions...';
+  }
+  function showEmpty() {
+    document.getElementById('resultsContainer').innerHTML =
+      '<div class="state-box"><div class="state-icon">📭</div><div class="state-title">No past questions found</div><p class="state-sub">Try a different department or level. The admin can upload from the Admin panel.</p></div>';
+  }
+  function showError() {
+    document.getElementById('resultsContainer').innerHTML =
+      '<div class="state-box"><div class="state-icon">⚠️</div><div class="state-title">Could not load files</div><p class="state-sub">Check your connection and try again.</p></div>';
+    document.getElementById('statusTxt').innerHTML = 'Error loading past questions.';
+  }
+  function updateStatus(count) {
+    var dn = activeDept  === 'all' ? 'All Departments' : (DEPT_META[activeDept] ? DEPT_META[activeDept].label : activeDept);
+    var ln = activeLevel === 'all' ? 'All Levels'      : (LEVEL_LABELS[activeLevel] || activeLevel);
+    document.getElementById('statusTxt').innerHTML =
+      '<strong>' + count + '</strong> result' + (count!==1?'s':'') + ' &nbsp;·&nbsp; ' + dn + ' &nbsp;·&nbsp; ' + ln;
+  }
+
+  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function esc(s)     { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+  /* INIT */
+  loadData('all','all');
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/nastestpi25-26study/sw.js');
+  }
+</script>
+
+</body>
+</html>
