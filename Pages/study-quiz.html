@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study and Quiz | NASTES Research Hub</title>
+  <link rel="manifest" href="/nastestpi25-26study/manifest.json">
+  <meta name="theme-color" content="#1B4332">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="/nastestpi25-26study/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --accent:#1B4332;--accent-lit:#2D6A4F;--accent-dark:#122e23;
+  --bg:#080808;--bg-mid:#111111;--bg-card:#161616;--border:#222222;
+  --text:#F0EDE6;--text-dim:#B8B5AF;
+  --green:#22c55e;--red:#ef4444;--gold:#f59e0b;
+  --nav-h:60px;--ease:0.3s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px;}
+::selection{background:var(--accent);color:var(--text);}
+a{color:inherit;text-decoration:none;}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(8,8,8,0.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;z-index:100;gap:10px;width:100%;}
+.burger{background:none;border:none;cursor:pointer;padding:8px 6px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
+.burger span{display:block;width:22px;height:2px;background:var(--text);border-radius:1px;transition:var(--ease);}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.burger.open span:nth-child(2){opacity:0;}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.topbar-brand{display:flex;align-items:center;gap:9px;text-decoration:none;flex:1;min-width:0;overflow:hidden;}
+.topbar-logos{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.topbar-logos .lg-nastes{height:34px;width:34px;object-fit:contain;}
+.topbar-logos .lg-poly{height:26px;width:26px;object-fit:contain;opacity:0.82;}
+.topbar-name{font-family:'Syne',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:0.07em;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-name em{display:block;font-style:normal;font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:0.14em;color:var(--accent-lit);font-weight:400;margin-top:2px;}
+
+/* SIDE NAV */
+.nav-mask{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:150;opacity:0;pointer-events:none;transition:var(--ease);}
+.nav-mask.on{opacity:1;pointer-events:all;}
+.sidenav{position:fixed;top:0;left:0;bottom:0;width:276px;max-width:84vw;background:#0c0c0c;border-right:1px solid var(--border);z-index:200;transform:translateX(-100%);transition:var(--ease);display:flex;flex-direction:column;overflow-y:auto;}
+.sidenav.on{transform:translateX(0);}
+.sn-head{padding:18px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.sn-head .lg-nastes{height:38px;width:38px;object-fit:contain;}
+.sn-head .lg-poly{height:28px;width:28px;object-fit:contain;opacity:0.8;}
+.sn-head-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--text);letter-spacing:0.04em;line-height:1.3;}
+.sn-links{flex:1;padding:10px 0;}
+.sn-links a{display:flex;align-items:center;gap:11px;padding:11px 18px;color:var(--text-dim);text-decoration:none;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;border-left:3px solid transparent;transition:var(--ease);}
+.sn-links a:hover,.sn-links a.active{color:var(--text);background:rgba(27,67,50,0.13);border-left-color:var(--accent);}
+.sn-links a .ni{font-size:15px;width:19px;text-align:center;flex-shrink:0;}
+.sn-rule{height:1px;background:var(--border);margin:7px 18px;}
+.sn-links a.admin-lnk{color:var(--accent-lit);}
+.sn-links a.admin-lnk:hover{color:var(--text);background:rgba(27,67,50,0.2);}
+.sn-foot{padding:14px 18px;border-top:1px solid var(--border);}
+.sn-foot p{font-family:'Space Mono',monospace;font-size:9.5px;color:var(--text-dim);line-height:1.75;letter-spacing:0.02em;}
+.sn-foot strong{color:var(--accent-lit);}
+
+main{padding-top:var(--nav-h);}
+
+/* PAGE HERO */
+.page-hero{padding:40px 20px 32px;background:linear-gradient(135deg,rgba(27,67,50,0.12),rgba(27,67,50,0.03));border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.page-hero::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(27,67,50,0.22) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+.hero-inner{position:relative;z-index:1;}
+.page-tag{font-family:'Space Mono',monospace;font-size:10px;color:var(--accent-lit);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;}
+.page-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(1.6rem,6vw,2.4rem);letter-spacing:0.01em;color:var(--text);margin-bottom:8px;}
+.page-title span{color:var(--accent-lit);}
+.page-sub{font-size:0.88rem;color:var(--text-dim);max-width:480px;line-height:1.6;}
+
+/* NICKNAME MODAL */
+.modal-back{position:fixed;inset:0;background:rgba(8,8,8,0.92);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-back.hidden{display:none;}
+.modal-box{background:var(--bg-card);border:1px solid var(--border);border-top:3px solid var(--accent);padding:32px 24px;width:100%;max-width:360px;text-align:center;}
+.modal-box h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:var(--text);margin-bottom:8px;}
+.modal-box p{font-size:0.85rem;color:var(--text-dim);margin-bottom:24px;line-height:1.7;}
+.modal-inp{width:100%;background:var(--bg-mid);border:1px solid var(--border);padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;margin-bottom:16px;transition:border-color var(--ease);}
+.modal-inp:focus{border-color:var(--accent);}
+.modal-btn{width:100%;background:var(--accent);color:var(--text);border:none;padding:13px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;transition:var(--ease);}
+.modal-btn:hover{background:var(--accent-lit);}
+
+/* TABS */
+.tab-bar{display:flex;border-bottom:1px solid var(--border);background:var(--bg-mid);overflow-x:auto;padding:0 16px;}
+.tab-btn{flex-shrink:0;padding:14px 16px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.82rem;color:var(--text-dim);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all var(--ease);white-space:nowrap;}
+.tab-btn.active{color:var(--accent-lit);border-bottom-color:var(--accent-lit);}
+.tab-panel{display:none;padding:24px 20px;}
+.tab-panel.active{display:block;}
+
+/* QOTD */
+.qotd-card{background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--accent);padding:24px;margin-bottom:20px;}
+.qotd-tag{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--accent-lit);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;}
+.qotd-course{display:inline-block;background:rgba(27,67,50,0.15);color:var(--accent-lit);font-family:'Space Mono',monospace;font-size:0.65rem;padding:3px 10px;border:1px solid rgba(27,67,50,0.3);margin-bottom:14px;}
+.qotd-question{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--text);line-height:1.5;margin-bottom:20px;}
+.options-grid{display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:var(--bg-mid);border:1px solid var(--border);padding:13px 16px;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-size:0.88rem;cursor:pointer;text-align:left;transition:all var(--ease);}
+.option-btn:hover:not(:disabled){border-color:var(--accent-lit);color:var(--text);}
+.option-btn.correct{border-color:var(--green)!important;background:rgba(34,197,94,0.12)!important;color:var(--green)!important;}
+.option-btn.wrong{border-color:var(--red)!important;background:rgba(239,68,68,0.12)!important;color:var(--red)!important;}
+.option-btn:disabled{cursor:default;}
+.explanation-box{background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.2);padding:14px 16px;margin-top:16px;font-size:0.85rem;color:var(--text-dim);line-height:1.7;display:none;}
+.explanation-box.show{display:block;}
+.explanation-box strong{color:var(--green);}
+.already-done{text-align:center;padding:32px 16px;}
+.already-done .big-icon{font-size:3rem;margin-bottom:12px;}
+.already-done h3{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--text);margin-bottom:6px;}
+.already-done p{font-size:0.85rem;color:var(--text-dim);}
+
+/* QUIZ */
+.quiz-setup label{display:block;font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--accent-lit);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.quiz-select{width:100%;background:var(--bg-card);border:1px solid var(--border);padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;appearance:none;cursor:pointer;margin-bottom:16px;}
+.quiz-select:focus{border-color:var(--accent);}
+.start-quiz-btn{width:100%;background:var(--accent);color:var(--text);border:none;padding:14px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;transition:var(--ease);}
+.start-quiz-btn:hover{background:var(--accent-lit);}
+.quiz-progress{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.progress-bar{flex:1;height:6px;background:var(--border);overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);transition:width 0.4s ease;}
+.progress-text{font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--text-dim);flex-shrink:0;}
+.quiz-result{text-align:center;padding:32px 16px;background:var(--bg-card);border:1px solid var(--border);}
+.result-score{font-family:'Syne',sans-serif;font-weight:800;font-size:3rem;color:var(--accent-lit);}
+.result-label{font-size:0.85rem;color:var(--text-dim);margin-bottom:20px;}
+.result-grade{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:20px;}
+.retry-btn{background:var(--bg-mid);border:1px solid var(--border);color:var(--text);padding:12px 24px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.88rem;cursor:pointer;margin:0 6px;transition:var(--ease);}
+.retry-btn:hover{border-color:var(--accent-lit);}
+
+/* STREAK */
+.streak-hero{text-align:center;padding:32px 16px;background:linear-gradient(135deg,rgba(27,67,50,0.12),rgba(27,67,50,0.03));border:1px solid rgba(27,67,50,0.25);margin-bottom:24px;}
+.streak-fire{font-size:3.5rem;margin-bottom:8px;}
+.streak-count{font-family:'Syne',sans-serif;font-weight:800;font-size:3rem;color:var(--accent-lit);}
+.streak-label{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px;}
+.streak-best{font-size:0.82rem;color:var(--text-dim);margin-top:8px;}
+.streak-best span{color:var(--accent-lit);}
+.trophy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px;}
+@media(min-width:480px){.trophy-grid{grid-template-columns:repeat(3,1fr);}}
+.trophy-card{background:var(--bg-card);border:1px solid var(--border);padding:16px 12px;text-align:center;}
+.trophy-card.earned{border-color:var(--gold);background:rgba(245,158,11,0.08);}
+.trophy-card.legendary{border-color:var(--accent-lit);background:rgba(27,67,50,0.12);}
+.trophy-card.diamond{border-color:#60a5fa;background:rgba(96,165,250,0.08);}
+.trophy-icon{font-size:2rem;margin-bottom:6px;filter:grayscale(1);opacity:0.4;}
+.trophy-card.earned .trophy-icon,.trophy-card.legendary .trophy-icon,.trophy-card.diamond .trophy-icon{filter:none;opacity:1;}
+.trophy-name{font-family:'Syne',sans-serif;font-weight:700;font-size:0.78rem;color:var(--text-dim);}
+.trophy-card.earned .trophy-name{color:var(--gold);}
+.trophy-card.legendary .trophy-name{color:var(--accent-lit);}
+.trophy-card.diamond .trophy-name{color:#60a5fa;}
+.trophy-req{font-family:'Space Mono',monospace;font-size:0.6rem;color:rgba(240,237,230,0.35);margin-top:3px;}
+
+/* LEADERBOARD */
+.lb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.lb-header h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--text);}
+.lb-reset-info{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--text-dim);}
+.lb-my-rank{background:rgba(27,67,50,0.1);border:1px solid rgba(27,67,50,0.25);padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
+.lb-my-rank-left{font-size:0.85rem;color:var(--text-dim);}
+.lb-my-rank-left strong{color:var(--text);font-family:'Syne',sans-serif;}
+.lb-my-rank-score{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--accent-lit);}
+.lb-table{width:100%;border-collapse:collapse;}
+.lb-table th{background:rgba(27,67,50,0.12);color:var(--accent-lit);font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;padding:10px 12px;text-align:left;}
+.lb-table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.85rem;color:var(--text-dim);}
+.lb-table tr:last-child td{border-bottom:none;}
+.lb-table tr.my-row td{color:var(--accent-lit);background:rgba(27,67,50,0.07);}
+.lb-name{font-family:'Syne',sans-serif;font-weight:600;color:var(--text);}
+.lb-pts{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent-lit);}
+.lb-loading{text-align:center;padding:32px;color:var(--text-dim);}
+
+/* FOOTER */
+.footer{background:#050505;border-top:1px solid var(--border);padding:48px 20px 32px;}
+.ft-brand{display:flex;align-items:center;gap:12px;margin-bottom:26px;}
+.ft-brand img{height:40px;width:40px;object-fit:contain;}
+.ft-site-name{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.06em;color:var(--text);}
+.ft-motto{font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;color:var(--accent-lit);margin-top:3px;}
+.ft-links{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 18px;margin-bottom:30px;}
+.ft-links a{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text-dim);text-decoration:none;padding:3px 0;transition:var(--ease);}
+.ft-links a:hover{color:var(--accent-lit);}
+.ft-rule{height:1px;background:var(--border);margin-bottom:22px;}
+.ft-credit{font-family:'Space Mono',monospace;font-size:9.5px;color:var(--text-dim);line-height:2;letter-spacing:0.04em;}
+.ft-credit strong{color:var(--accent-lit);}
+@media(min-width:480px){.ft-links{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:768px){.page-hero{padding:52px 40px 40px;}.tab-panel{padding:28px 40px;}.footer{padding:56px 40px 40px;}}
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Open menu" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="topbar-brand" href="/nastestpi25-26study/">
+    <div class="topbar-logos">
+      <img class="lg-nastes" src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES Logo">
+      <img class="lg-poly" src="/nastestpi25-26study/icons/polytechnic-logo.png" alt="Polytechnic Ibadan">
+    </div>
+    <div class="topbar-name">NASTES RESEARCH HUB<em>POLYTECHNIC IBADAN</em></div>
+  </a>
+</header>
+
+<div class="nav-mask" id="navMask" onclick="toggleNav()"></div>
+<nav class="sidenav" id="sidenav">
+  <div class="sn-head">
+    <img class="lg-nastes" src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES">
+    <img class="lg-poly" src="/nastestpi25-26study/icons/polytechnic-logo.png" alt="Polytechnic Ibadan">
+    <div class="sn-head-title">NASTES RESEARCH HUB</div>
+  </div>
+  <div class="sn-links">
+    <a href="/nastestpi25-26study/"><span class="ni">🏠</span> Home</a>
+    <a href="/nastestpi25-26study/Pages/gp-calculator.html"><span class="ni">🎓</span> GP Calculator</a>
+    <a href="/nastestpi25-26study/Pages/past-questions.html"><span class="ni">📄</span> Past Questions</a>
+    <a href="/nastestpi25-26study/Pages/study-quiz.html" class="active"><span class="ni">🧪</span> Study and Quiz</a>
+    <a href="/nastestpi25-26study/Pages/departments.html"><span class="ni">🏛️</span> Departments</a>
+    <a href="/nastestpi25-26study/Pages/marketplace.html"><span class="ni">🛒</span> Student Marketplace</a>
+    <a href="/nastestpi25-26study/Pages/academic-calendar.html"><span class="ni">📅</span> Academic Calendar</a>
+    <a href="/nastestpi25-26study/Pages/news-events.html"><span class="ni">📢</span> News and Events</a>
+    <a href="/nastestpi25-26study/Pages/about.html"><span class="ni">ℹ️</span> About NASTES</a>
+    <div class="sn-rule"></div>
+    <a href="/nastestpi25-26study/#contact"><span class="ni">✉️</span> Contact Us</a>
+    <div class="sn-rule"></div>
+    <a href="/nastestpi25-26study/Pages/admin.html" class="admin-lnk"><span class="ni">⚙️</span> Admin</a>
+  </div>
+  <div class="sn-foot">
+    <p><strong>Adeniji Habeeb Adewale</strong><br>President, NASTES TPI Chapter 25/26<br>Era of Unity and Advancement</p>
+  </div>
+</nav>
+
+<!-- NICKNAME MODAL -->
+<div class="modal-back hidden" id="nicknameModal">
+  <div class="modal-box">
+    <div style="font-size:2.5rem;margin-bottom:12px">🧪</div>
+    <h2>Welcome to Study and Compete</h2>
+    <p>Enter a nickname to track your streak, earn trophies and appear on the leaderboard. You only do this once.</p>
+    <input class="modal-inp" id="nicknameInput" type="text" placeholder="Your nickname e.g. NASTES_Legend" maxlength="20">
+    <button class="modal-btn" onclick="saveNickname()">Let's Go 💪</button>
+  </div>
+</div>
+
+<main>
+  <div class="page-hero">
+    <div class="hero-inner">
+      <div class="page-tag">🧪 NASTES Study Zone</div>
+      <h1 class="page-title">Study and <span>Compete</span></h1>
+      <p class="page-sub">Daily questions, quizzes, streaks and a leaderboard. Built for all NASTES students at Poly Ibadan. Compete across Physics, Biology, Chemistry, SLT and Pharmaceutical Technology.</p>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('qotd',this)">⭐ Question of the Day</button>
+    <button class="tab-btn" onclick="switchTab('quiz',this)">🎓 Quiz Mode</button>
+    <button class="tab-btn" onclick="switchTab('streak',this)">🔥 Streak and Trophies</button>
+    <button class="tab-btn" onclick="switchTab('lb',this)">🏆 Leaderboard</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-qotd"><div id="qotdContent"></div></div>
+  <div class="tab-panel" id="tab-quiz"><div id="quizContent">
+    <div class="quiz-setup">
+      <label>Select Department or Course</label>
+      <select class="quiz-select" id="quizCourse"></select>
+      <label>Number of Questions</label>
+      <select class="quiz-select" id="quizCount">
+        <option value="5">5 Questions</option>
+        <option value="10" selected>10 Questions</option>
+        <option value="15">15 Questions</option>
+        <option value="20">20 Questions</option>
+      </select>
+      <button class="start-quiz-btn" onclick="startQuiz()">Start Quiz ▶</button>
+    </div>
+  </div></div>
+  <div class="tab-panel" id="tab-streak"><div id="streakContent"></div></div>
+  <div class="tab-panel" id="tab-lb"><div id="lbContent"><div class="lb-loading">Loading leaderboard...</div></div></div>
+
+  <footer class="footer">
+    <div class="ft-brand">
+      <img src="/nastestpi25-26study/icons/nastes-logo.png" alt="NASTES Logo">
+      <div>
+        <div class="ft-site-name">NASTES RESEARCH HUB</div>
+        <div class="ft-motto">Technology For Human Advancement</div>
+      </div>
+    </div>
+    <div class="ft-links">
+      <a href="/nastestpi25-26study/">Home</a>
+      <a href="/nastestpi25-26study/Pages/gp-calculator.html">GP Calculator</a>
+      <a href="/nastestpi25-26study/Pages/past-questions.html">Past Questions</a>
+      <a href="/nastestpi25-26study/Pages/study-quiz.html">Study and Quiz</a>
+      <a href="/nastestpi25-26study/Pages/departments.html">Departments</a>
+      <a href="/nastestpi25-26study/Pages/marketplace.html">Student Marketplace</a>
+      <a href="/nastestpi25-26study/Pages/academic-calendar.html">Academic Calendar</a>
+      <a href="/nastestpi25-26study/Pages/news-events.html">News and Events</a>
+      <a href="/nastestpi25-26study/Pages/about.html">About NASTES</a>
+      <a href="/nastestpi25-26study/#contact">Contact Us</a>
+      <a href="/nastestpi25-26study/Pages/admin.html">Admin</a>
+    </div>
+    <div class="ft-rule"></div>
+    <div class="ft-credit">
+      <strong>NASTES TPI Chapter 25/26</strong><br>
+      Era of Unity and Advancement<br>
+      President: <strong>Adeniji Habeeb Adewale</strong><br>
+      The Polytechnic Ibadan &nbsp;·&nbsp; 2025/2026
+    </div>
+  </footer>
+</main>
+
+<script>
+/* ── CONFIG ── */
+var SB_URL = 'https://ixsmyvwuavlxxywzgujn.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4c215dnd1YXZseHh5d3pndWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjAxMDAsImV4cCI6MjA5ODMzNjEwMH0.U2R4PB-YRdpE7NTYCheeh_G9insrmMxKk_PA1TKSVZM';
+
+/* ── QUESTION BANK ── */
+var QB=[
+  /* CHEMISTRY - STC */
+  {dept:"Chemistry",course:"STC 111",topic:"Atomic Structure",q:"What is the atomic number of Carbon?",o:["4","6","8","12"],a:1,e:"Carbon has 6 protons in its nucleus, giving it an atomic number of 6."},
+  {dept:"Chemistry",course:"STC 111",topic:"Atomic Structure",q:"Which particle has no charge in an atom?",o:["Proton","Electron","Neutron","Ion"],a:2,e:"Neutrons carry no electrical charge. Protons are positive and electrons are negative."},
+  {dept:"Chemistry",course:"STC 111",topic:"Periodic Table",q:"Which group of elements is known as noble gases?",o:["Group I","Group VII","Group VIII/0","Group IV"],a:2,e:"Noble gases are in Group VIII - they have full outer shells and are very unreactive."},
+  {dept:"Chemistry",course:"STC 111",topic:"Chemical Bonding",q:"What type of bond is formed in NaCl?",o:["Covalent bond","Ionic bond","Metallic bond","Hydrogen bond"],a:1,e:"NaCl is formed by ionic bonding - sodium donates an electron to chlorine."},
+  {dept:"Chemistry",course:"STC 111",topic:"Acids and Bases",q:"What is the pH of a neutral solution?",o:["0","7","14","1"],a:1,e:"A neutral solution has a pH of exactly 7."},
+  {dept:"Chemistry",course:"STC 111",topic:"Acids and Bases",q:"Which of the following is a strong acid?",o:["Acetic acid","Hydrochloric acid","Carbonic acid","Citric acid"],a:1,e:"HCl is a strong acid - it fully dissociates in water."},
+  {dept:"Chemistry",course:"STC 111",topic:"Mole Concept",q:"One mole of any substance contains how many particles?",o:["6.02 x 10^21","6.02 x 10^23","3.01 x 10^23","1.2 x 10^24"],a:1,e:"Avogadro number is 6.02 x 10^23 - the number of particles in one mole."},
+  {dept:"Chemistry",course:"STC 111",topic:"Gas Laws",q:"At STP, the volume of one mole of any ideal gas is:",o:["11.2 L","22.4 L","44.8 L","5.6 L"],a:1,e:"At STP, one mole of any ideal gas occupies 22.4 litres."},
+  {dept:"Chemistry",course:"STC 111",topic:"Oxidation",q:"Oxidation is defined as:",o:["Gain of electrons","Loss of protons","Loss of electrons","Gain of neutrons"],a:2,e:"Oxidation involves the loss of electrons. OIL RIG: Oxidation Is Loss, Reduction Is Gain."},
+  {dept:"Chemistry",course:"STC 112",topic:"Organic Chemistry",q:"What is the general formula for alkanes?",o:["CnH2n","CnH2n+2","CnH2n-2","CnHn"],a:1,e:"Alkanes are saturated hydrocarbons with the general formula CnH2n+2."},
+  {dept:"Chemistry",course:"STC 112",topic:"Organic Chemistry",q:"Ethanol belongs to which functional group?",o:["Aldehyde","Ketone","Alcohol","Ether"],a:2,e:"Ethanol (C2H5OH) contains the -OH group, making it an alcohol."},
+  {dept:"Chemistry",course:"STC 112",topic:"Electrochemistry",q:"In electrolysis, oxidation occurs at the:",o:["Cathode","Anode","Electrolyte","Salt bridge"],a:1,e:"Oxidation always occurs at the anode during electrolysis."},
+  {dept:"Chemistry",course:"STC 112",topic:"Thermochemistry",q:"An exothermic reaction:",o:["Absorbs heat from surroundings","Releases heat to surroundings","Has no heat change","Only occurs at high temperature"],a:1,e:"Exothermic reactions release energy/heat to the surroundings."},
+  {dept:"Chemistry",course:"STC 112",topic:"Reaction Rates",q:"A catalyst affects a reaction by:",o:["Increasing activation energy","Decreasing activation energy","Changing the products","Being consumed"],a:1,e:"Catalysts lower the activation energy, speeding up the reaction without being consumed."},
+  {dept:"Chemistry",course:"STC 121",topic:"Titration",q:"A burette is used to measure:",o:["Fixed volumes","Variable volumes of liquid","Mass of solids","Temperature"],a:1,e:"A burette delivers variable, precise volumes of liquid in titrations."},
+  {dept:"Chemistry",course:"STC 121",topic:"Chromatography",q:"Rf value = ?",o:["Distance solvent / distance spot","Distance spot / distance solvent","Mass spot / mass solvent","Speed spot / speed solvent"],a:1,e:"Rf = distance travelled by spot / distance travelled by solvent front."},
+  {dept:"Chemistry",course:"STC 121",topic:"Spectroscopy",q:"Beer-Lambert law relates absorbance to:",o:["Temperature","Concentration","Pressure","Volume"],a:1,e:"Beer-Lambert law: absorbance is directly proportional to the concentration."},
+  {dept:"Chemistry",course:"STC 122",topic:"Hydrocarbons",q:"Benzene has the molecular formula:",o:["C6H12","C6H6","C6H10","C6H8"],a:1,e:"Benzene is C6H6, an aromatic hydrocarbon."},
+  {dept:"Chemistry",course:"STC 122",topic:"Carbohydrates",q:"Glucose is a:",o:["Disaccharide","Polysaccharide","Monosaccharide","Oligosaccharide"],a:2,e:"Glucose (C6H12O6) is a monosaccharide - the simplest unit of carbohydrates."},
+  {dept:"Chemistry",course:"STC 123",topic:"Gas Laws",q:"Boyle law: at constant temperature, pressure is:",o:["Directly proportional to volume","Inversely proportional to volume","Equal to volume","Independent of volume"],a:1,e:"Boyle Law: P is inversely proportional to V at constant temperature."},
+  {dept:"Chemistry",course:"STC 123",topic:"Gas Laws",q:"The ideal gas equation is:",o:["PV = nRT","PV = mRT","PT = nRV","PV = nR/T"],a:0,e:"PV = nRT where P=pressure, V=volume, n=moles, R=gas constant, T=temperature."},
+  /* BIOLOGY - STB */
+  {dept:"Biology",course:"STB 111",topic:"Cell Biology",q:"The powerhouse of the cell is the:",o:["Nucleus","Ribosome","Mitochondria","Chloroplast"],a:2,e:"Mitochondria produce ATP through cellular respiration."},
+  {dept:"Biology",course:"STB 111",topic:"Cell Biology",q:"Which organelle is responsible for protein synthesis?",o:["Mitochondria","Golgi apparatus","Ribosome","Lysosome"],a:2,e:"Ribosomes are the sites of protein synthesis."},
+  {dept:"Biology",course:"STB 111",topic:"Cell Division",q:"Mitosis produces:",o:["4 haploid cells","2 haploid cells","2 identical diploid cells","4 identical diploid cells"],a:2,e:"Mitosis produces 2 genetically identical diploid daughter cells - used for growth and repair."},
+  {dept:"Biology",course:"STB 111",topic:"Genetics",q:"Which bases are complementary in DNA?",o:["A-G and T-C","A-T and G-C","A-C and G-T","A-U and G-C"],a:1,e:"In DNA: Adenine pairs with Thymine (A-T) and Guanine pairs with Cytosine (G-C)."},
+  {dept:"Biology",course:"STB 111",topic:"Ecology",q:"The process by which plants make food using sunlight is:",o:["Respiration","Fermentation","Photosynthesis","Transpiration"],a:2,e:"Photosynthesis: 6CO2 + 6H2O + light -> C6H12O6 + 6O2"},
+  {dept:"Biology",course:"STB 111",topic:"Human Biology",q:"Which blood group is the universal donor?",o:["A","B","AB","O"],a:3,e:"Blood group O negative is the universal donor - lacks A, B antigens and Rh factor."},
+  {dept:"Biology",course:"STB 111",topic:"Human Biology",q:"The largest organ in the human body is the:",o:["Liver","Brain","Skin","Intestine"],a:2,e:"The skin is the largest organ."},
+  {dept:"Biology",course:"STB 112",topic:"Microbiology",q:"Viruses cannot reproduce independently because:",o:["They have cell walls","They are too small","They need a host cell","They have no proteins"],a:2,e:"Viruses need a host cell to replicate - they cannot reproduce on their own."},
+  {dept:"Biology",course:"STB 112",topic:"Microbiology",q:"Gram-positive bacteria appear:",o:["Pink/red","Blue/purple","Yellow","Colourless"],a:1,e:"Gram-positive bacteria retain crystal violet and appear blue/purple."},
+  {dept:"Biology",course:"STB 112",topic:"Enzymes",q:"The region of an enzyme where the substrate binds is called the:",o:["Allosteric site","Active site","Binding domain","Receptor site"],a:1,e:"The active site is where the substrate binds to form enzyme-substrate complex."},
+  {dept:"Biology",course:"STB 112",topic:"Enzymes",q:"Enzyme activity destroyed by high temperature is called:",o:["Inhibition","Denaturation","Activation","Saturation"],a:1,e:"High temperature disrupts the 3D shape of the enzyme - this is denaturation."},
+  {dept:"Biology",course:"STB 112",topic:"Respiration",q:"Anaerobic respiration in yeast produces:",o:["Lactic acid","Ethanol and CO2","Only CO2","Only ethanol"],a:1,e:"Yeast fermentation: glucose -> ethanol + CO2."},
+  {dept:"Biology",course:"STB 121",topic:"Plant Anatomy",q:"Xylem transports:",o:["Sugars downward","Water and minerals upward","Hormones","Proteins"],a:1,e:"Xylem transports water and dissolved minerals from roots upward to leaves."},
+  {dept:"Biology",course:"STB 121",topic:"Plant Hormones",q:"Auxins promote:",o:["Flowering","Cell elongation","Fruit ripening","Dormancy"],a:1,e:"Auxins promote cell elongation and are responsible for phototropism."},
+  /* PHYSICS - STP */
+  {dept:"Physics",course:"STP 111",topic:"Mechanics",q:"Newton first law is also called the law of:",o:["Acceleration","Inertia","Gravitation","Action-Reaction"],a:1,e:"Newton first law: an object at rest stays at rest unless acted upon by a force. This is inertia."},
+  {dept:"Physics",course:"STP 111",topic:"Mechanics",q:"Work done = ?",o:["W = m x a","W = F x d","W = F/d","W = m x v"],a:1,e:"Work = Force x distance (W = Fd), measured in Joules."},
+  {dept:"Physics",course:"STP 111",topic:"Waves",q:"Sound waves are:",o:["Transverse waves","Longitudinal waves","Electromagnetic waves","Surface waves"],a:1,e:"Sound waves are longitudinal - particles vibrate parallel to direction of propagation."},
+  {dept:"Physics",course:"STP 111",topic:"Electricity",q:"Ohm law: V = ?",o:["IR squared","I/R","IR","I+R"],a:2,e:"Ohm Law: V = IR, where V is voltage, I is current, R is resistance."},
+  {dept:"Physics",course:"STP 111",topic:"Electricity",q:"The SI unit of electric current is:",o:["Volt","Ohm","Watt","Ampere"],a:3,e:"The Ampere (A) is the SI unit of electric current."},
+  {dept:"Physics",course:"STP 111",topic:"Optics",q:"The bending of light as it passes from one medium to another is called:",o:["Reflection","Diffraction","Refraction","Dispersion"],a:2,e:"Refraction is the bending of light when it changes medium."},
+  {dept:"Physics",course:"STP 111",topic:"Mechanics",q:"Kinetic energy = ?",o:["mgh","half mv squared","Fd","mv"],a:1,e:"Kinetic Energy = 1/2 x mass x velocity squared."},
+  {dept:"Physics",course:"STP 111",topic:"Pressure",q:"Pressure = ?",o:["Force x Area","Force / Area","Mass / Volume","Force x Volume"],a:1,e:"Pressure = Force / Area (P = F/A). Measured in Pascals (Pa)."},
+  {dept:"Physics",course:"STP 112",topic:"Nuclear Physics",q:"Alpha particles consist of:",o:["2 protons and 2 neutrons","2 protons and 2 electrons","1 proton and 2 neutrons","4 protons"],a:0,e:"An alpha particle is identical to a helium-4 nucleus: 2 protons and 2 neutrons."},
+  {dept:"Physics",course:"STP 112",topic:"Nuclear Physics",q:"Which radiation has the highest penetrating power?",o:["Alpha","Beta","Gamma","X-rays"],a:2,e:"Gamma radiation is electromagnetic and has the highest penetrating power."},
+  {dept:"Physics",course:"STP 112",topic:"Electronics",q:"A transistor can be used as:",o:["A resistor only","A switch and amplifier","A capacitor","A transformer"],a:1,e:"Transistors are used as switches (digital) and amplifiers (analog)."},
+  {dept:"Physics",course:"STP 112",topic:"Nuclear Physics",q:"Half-life is the time for:",o:["All atoms to decay","Half the atoms to decay","One atom to decay","Activity to reach zero"],a:1,e:"Half-life is the time for half the radioactive nuclei in a sample to decay."},
+  {dept:"Physics",course:"STP 121",topic:"Basic Electronics",q:"In a series circuit, the total resistance is:",o:["Less than the smallest","Sum of all resistors","Product of all resistors","Equal to the largest"],a:1,e:"In a series circuit: R_total = R1 + R2 + R3."},
+  {dept:"Physics",course:"STP 121",topic:"Semiconductors",q:"Silicon is an example of a:",o:["Conductor","Insulator","Semiconductor","Superconductor"],a:2,e:"Silicon is the most widely used semiconductor."},
+  {dept:"Physics",course:"STP 122",topic:"Logic Gates",q:"The output of an AND gate is HIGH only when:",o:["Any input is HIGH","All inputs are HIGH","Any input is LOW","All inputs are LOW"],a:1,e:"AND gate: output is HIGH only when ALL inputs are HIGH."},
+  {dept:"Physics",course:"STP 122",topic:"Logic Gates",q:"The output of a NOT gate is:",o:["Same as input","Opposite of input","Always HIGH","Always LOW"],a:1,e:"A NOT gate outputs the opposite of its input."},
+  /* SLT - GLT */
+  {dept:"SLT",course:"GLT 111",topic:"Glass Properties",q:"The main component of ordinary glass is:",o:["Sodium carbonate","Silicon dioxide","Calcium oxide","Aluminium oxide"],a:1,e:"Silicon dioxide (SiO2) is the main component of glass."},
+  {dept:"SLT",course:"GLT 111",topic:"Glass Properties",q:"Borosilicate glass (Pyrex) is resistant to:",o:["Scratching","Thermal shock","Chemical attack","UV radiation"],a:1,e:"Borosilicate glass has low thermal expansion - resistant to thermal shock."},
+  {dept:"SLT",course:"GLT 111",topic:"Lab Glassware",q:"Which glassware can be heated directly over a flame?",o:["Volumetric flask","Measuring cylinder","Boiling tube","Conical flask"],a:2,e:"Boiling tubes are designed to be heated directly."},
+  {dept:"SLT",course:"GLT 111",topic:"Glass Properties",q:"Soda-lime glass contains:",o:["Only silica","Silica, soda and lime","Only lime","Boron and silica"],a:1,e:"Soda-lime glass is made from silica (SiO2), sodium carbonate and calcium oxide."},
+  {dept:"SLT",course:"GLT 121",topic:"Glassblowing",q:"Glass becomes workable at approximately:",o:["100 degrees C","500 degrees C","800-1000 degrees C","1500 degrees C"],a:2,e:"Glass becomes soft and workable at approximately 800-1000 degrees C."},
+  {dept:"SLT",course:"GLT 121",topic:"Glassblowing",q:"Annealing glass involves:",o:["Rapid cooling","Slow controlled cooling","Heating to melting point","Adding chemicals"],a:1,e:"Annealing removes internal stresses by slowly cooling glass."},
+  {dept:"SLT",course:"GLT 121",topic:"Lab Equipment",q:"A desiccator is used to:",o:["Heat substances","Keep substances dry","Measure humidity","Cool rapidly"],a:1,e:"A desiccator contains a drying agent to keep substances free from moisture."},
+  /* PHARMACEUTICAL TECHNOLOGY */
+  {dept:"Pharmaceutical Technology",course:"PHM 111",topic:"Drug Classification",q:"Analgesics are drugs used to:",o:["Kill bacteria","Relieve pain","Reduce fever only","Treat depression"],a:1,e:"Analgesics are pain-relieving drugs. Examples: paracetamol, ibuprofen, aspirin."},
+  {dept:"Pharmaceutical Technology",course:"PHM 111",topic:"Drug Classification",q:"Antibiotics are used to treat infections caused by:",o:["Viruses","Bacteria","Fungi","Parasites only"],a:1,e:"Antibiotics kill or inhibit the growth of bacteria. They do NOT work on viruses."},
+  {dept:"Pharmaceutical Technology",course:"PHM 111",topic:"Drug Classification",q:"Antipyretics are drugs that:",o:["Kill bacteria","Relieve pain","Reduce body temperature","Increase blood pressure"],a:2,e:"Antipyretics reduce elevated body temperature (fever). E.g. paracetamol, aspirin."},
+  {dept:"Pharmaceutical Technology",course:"PHM 111",topic:"Dosage Forms",q:"A tablet is an example of which dosage form?",o:["Liquid","Semi-solid","Solid","Gaseous"],a:2,e:"Tablets are solid dosage forms made by compressing powdered drug and excipients."},
+  {dept:"Pharmaceutical Technology",course:"PHM 111",topic:"Dosage Forms",q:"An emulsion is a mixture of:",o:["Two solids","Two immiscible liquids","Solid and gas","Liquid and gas"],a:1,e:"An emulsion is a mixture of two immiscible liquids (e.g. oil and water) stabilized by an emulsifier."},
+  {dept:"Pharmaceutical Technology",course:"PHM 111",topic:"Pharmacology",q:"The route of administration that gives the fastest drug effect is:",o:["Oral","Topical","Intravenous","Intramuscular"],a:2,e:"Intravenous (IV) administration delivers drug directly into the bloodstream - fastest onset."},
+  {dept:"Pharmaceutical Technology",course:"PHM 111",topic:"Pharmacology",q:"Bioavailability refers to:",o:["Drug cost","Fraction of drug that reaches systemic circulation","Drug shelf life","Drug storage conditions"],a:1,e:"Bioavailability is the proportion of a drug that reaches systemic circulation unchanged."},
+  {dept:"Pharmaceutical Technology",course:"PHM 111",topic:"Pharmacology",q:"A drug that binds to a receptor and produces a response is called a/an:",o:["Antagonist","Agonist","Inhibitor","Catalyst"],a:1,e:"An agonist binds to a receptor and activates it, producing a biological response."},
+  {dept:"Pharmaceutical Technology",course:"PHM 112",topic:"Drug Interactions",q:"When two drugs together produce an effect greater than either alone, this is called:",o:["Antagonism","Synergism","Tolerance","Addiction"],a:1,e:"Synergism (or potentiation): combined drug effect greater than the sum of individual effects."},
+  {dept:"Pharmaceutical Technology",course:"PHM 112",topic:"Dosage Calculations",q:"Drug dose is most commonly expressed in:",o:["Litres","Milligrams (mg)","Kilometres","Calories"],a:1,e:"Drug doses are typically expressed in milligrams (mg) or micrograms (mcg)."},
+  {dept:"Pharmaceutical Technology",course:"PHM 112",topic:"Storage",q:"Drugs labelled 'store in a cool dry place' should be kept at:",o:["Below 0 degrees C","8 to 15 degrees C","15 to 25 degrees C","Above 30 degrees C"],a:2,e:"Cool dry place: 15-25 degrees C, away from moisture and direct light."},
+  {dept:"Pharmaceutical Technology",course:"PHM 112",topic:"Pharmacokinetics",q:"The term 'half-life' of a drug means:",o:["Time to absorb the drug","Time for drug concentration to fall by half","Time for full effect","Time to excrete the drug"],a:1,e:"Drug half-life: time for plasma drug concentration to reduce by 50%."},
+  {dept:"Pharmaceutical Technology",course:"PHM 112",topic:"Drug Sources",q:"Penicillin was originally derived from:",o:["A plant","A bacterium","A fungus (Penicillium)","A mineral"],a:2,e:"Penicillin was discovered by Alexander Fleming from the mould Penicillium notatum."},
+  /* GENERAL SCIENCE */
+  {dept:"General Science",course:"General Science",topic:"Scientific Method",q:"The first step in the scientific method is:",o:["Forming a hypothesis","Making observations","Drawing conclusions","Conducting an experiment"],a:1,e:"Scientific method: Observation -> Question -> Hypothesis -> Experiment -> Conclusion."},
+  {dept:"General Science",course:"General Science",topic:"Lab Safety",q:"When heating a test tube, the open end should point:",o:["Toward yourself","Toward other people","Away from people","Downward"],a:2,e:"Always point a heated test tube away from yourself and others."},
+  {dept:"General Science",course:"General Science",topic:"Units",q:"The SI unit of temperature is:",o:["Celsius","Fahrenheit","Kelvin","Rankine"],a:2,e:"Kelvin (K) is the SI base unit of temperature. 0 degrees C = 273.15 K."},
+  {dept:"General Science",course:"General Science",topic:"Periodic Table",q:"Symbol Fe stands for:",o:["Fluorine","Francium","Iron","Fermium"],a:2,e:"Fe comes from Latin Ferrum meaning iron. Iron is element 26."},
+  {dept:"General Science",course:"General Science",topic:"Periodic Table",q:"Symbol Na stands for:",o:["Nitrogen","Neon","Sodium","Nickel"],a:2,e:"Na comes from Latin Natrium meaning sodium. Sodium is element 11."},
+  {dept:"General Science",course:"General Science",topic:"Periodic Table",q:"The most electronegative element is:",o:["Oxygen","Chlorine","Fluorine","Nitrogen"],a:2,e:"Fluorine has the highest electronegativity of all elements."},
+  {dept:"General Science",course:"General Science",topic:"Chemistry",q:"Air is a:",o:["Pure compound","Element","Mixture","Alloy"],a:2,e:"Air is a mixture of gases in variable proportions."},
+  {dept:"General Science",course:"General Science",topic:"Chemistry",q:"The gas that turns limewater milky is:",o:["Oxygen","Hydrogen","Carbon dioxide","Nitrogen"],a:2,e:"CO2 + Ca(OH)2 -> CaCO3 + H2O. Carbon dioxide turns limewater milky."},
+  {dept:"General Science",course:"General Science",topic:"Biology",q:"Insulin is produced by the:",o:["Liver","Kidney","Pancreas","Thyroid"],a:2,e:"Insulin is produced by beta cells in the pancreas."},
+  {dept:"General Science",course:"General Science",topic:"Biology",q:"The human heart has how many chambers?",o:["2","3","4","6"],a:2,e:"The human heart has 4 chambers: right atrium, right ventricle, left atrium, left ventricle."},
+  {dept:"General Science",course:"General Science",topic:"Biology",q:"Red blood cells carry:",o:["Antibodies","Oxygen","Clotting factors","Nutrients only"],a:1,e:"Red blood cells contain haemoglobin which binds to oxygen and transports it."},
+  {dept:"General Science",course:"General Science",topic:"Physics",q:"Speed of light in vacuum is approximately:",o:["3 x 10^6 m/s","3 x 10^8 m/s","3 x 10^10 m/s","3 x 10^4 m/s"],a:1,e:"Speed of light c = 3 x 10^8 m/s (300,000 km/s)."},
+  {dept:"General Science",course:"General Science",topic:"Biochemistry",q:"Proteins are made of:",o:["Glucose units","Fatty acids","Amino acids","Nucleotides"],a:2,e:"Proteins are polymers made of amino acid monomers joined by peptide bonds."},
+  {dept:"General Science",course:"General Science",topic:"Biochemistry",q:"Iodine solution tests for:",o:["Reducing sugars","Proteins","Starch","Lipids"],a:2,e:"Iodine solution turns blue-black in the presence of starch."},
+  {dept:"General Science",course:"General Science",topic:"Biochemistry",q:"Benedict test detects:",o:["Proteins","Starch","Reducing sugars","Lipids"],a:2,e:"Benedict reagent gives brick-red precipitate with reducing sugars."},
+  {dept:"General Science",course:"General Science",topic:"Microbiology",q:"Bacteria reproduce by:",o:["Mitosis","Meiosis","Binary fission","Budding"],a:2,e:"Bacteria reproduce by binary fission: one cell splits into two identical daughter cells."},
+  {dept:"General Science",course:"General Science",topic:"Microbiology",q:"An autoclave sterilizes using:",o:["UV light","Dry heat","Pressurized steam","Chemical solution"],a:2,e:"Autoclave uses pressurized steam at 121 degrees C for complete sterilization."},
+  {dept:"General Science",course:"General Science",topic:"Environmental",q:"The greenhouse effect is mainly caused by:",o:["Ozone depletion","Accumulation of CO2 and other gases","Acid rain","Deforestation alone"],a:1,e:"Greenhouse gases (CO2, CH4) trap heat in the atmosphere."},
+  {dept:"General Science",course:"General Science",topic:"Nigerian Science",q:"Nigeria gained independence in:",o:["1960","1963","1955","1970"],a:0,e:"Nigeria gained independence from Britain on October 1, 1960."},
+  {dept:"General Science",course:"General Science",topic:"Nigerian Science",q:"NAFDAC stands for:",o:["National Agency for Food Drug Administration and Control","National Authority for Food Drug and Chemical","Nigerian Agency for Food and Drug Administration","National Agency for Food and Drug Access Control"],a:0,e:"NAFDAC regulates food, drugs, cosmetics, medical devices in Nigeria."},
+  {dept:"General Science",course:"General Science",topic:"Science History",q:"Watson and Crick discovered:",o:["The cell","DNA double helix structure","Penicillin","Electron"],a:1,e:"Watson and Crick described the double helix structure of DNA in 1953."},
+  {dept:"General Science",course:"General Science",topic:"Space",q:"The planet closest to the Sun is:",o:["Venus","Earth","Mercury","Mars"],a:2,e:"Mercury is the closest planet to the Sun."},
+  {dept:"General Science",course:"General Science",topic:"Space",q:"The largest planet in our solar system is:",o:["Saturn","Uranus","Neptune","Jupiter"],a:3,e:"Jupiter is the largest planet: so big that all other planets could fit inside it."},
+  {dept:"General Science",course:"General Science",topic:"Fun Science",q:"The most abundant element in the universe is:",o:["Oxygen","Carbon","Helium","Hydrogen"],a:3,e:"Hydrogen is the most abundant element in the universe, making up about 75% of all matter."},
+  {dept:"General Science",course:"General Science",topic:"Human Body",q:"The hardest substance in the human body is:",o:["Bone","Cartilage","Tooth enamel","Fingernails"],a:2,e:"Tooth enamel is the hardest substance in the human body."},
+  {dept:"General Science",course:"General Science",topic:"Physics Facts",q:"Why is the sky blue?",o:["The ocean reflects blue colour","Rayleigh scattering of sunlight (blue light scattered more)","Ozone is blue","Nitrogen gas is blue"],a:1,e:"Rayleigh scattering: Earth's atmosphere scatters short wavelengths (blue light) more than long wavelengths."},
+  {dept:"General Science",course:"General Science",topic:"Physics Facts",q:"Why can't sound travel in space?",o:["Space is too cold","Sound needs a medium (matter) to travel through","Sound travels too slowly","Light blocks sound in space"],a:1,e:"Sound is a mechanical wave that needs particles to vibrate. Space is a near-perfect vacuum."},
+  {dept:"General Science",course:"General Science",topic:"Biology Facts",q:"How many chromosomes does a normal human cell have?",o:["23","46","92","44"],a:1,e:"Normal human body cells are diploid (2n) with 46 chromosomes (23 pairs)."},
+  {dept:"General Science",course:"General Science",topic:"Earth Science",q:"The most abundant element in Earth's crust is:",o:["Iron","Silicon","Aluminium","Oxygen"],a:3,e:"Oxygen is the most abundant element in Earth's crust at about 46% by mass."},
+  {dept:"General Science",course:"General Science",topic:"Measurements",q:"1 kg = how many grams?",o:["10","100","1000","10000"],a:2,e:"1 kg = 1000 g. The prefix kilo means 1000."},
+  {dept:"General Science",course:"MTH 113",topic:"Statistics",q:"The mean of 4, 6, 8, 10, 12 is:",o:["7","8","9","10"],a:1,e:"Mean = (4+6+8+10+12)/5 = 40/5 = 8."},
+  {dept:"General Science",course:"MTH 113",topic:"Trigonometry",q:"sin 90 degrees =",o:["0","0.5","1","0.707"],a:2,e:"sin 90 degrees = 1."},
+  {dept:"General Science",course:"MTH 113",topic:"Probability",q:"The probability of an impossible event is:",o:["1","0.5","0","-1"],a:2,e:"An impossible event has probability 0."}
+];
+
+/* ── STATE ── */
+var nickname    = localStorage.getItem('nastes_nick') || '';
+var streak      = parseInt(localStorage.getItem('nastes_streak') || '0');
+var bestStreak  = parseInt(localStorage.getItem('nastes_best') || '0');
+var lastStudy   = localStorage.getItem('nastes_lastday') || '';
+var trophies    = JSON.parse(localStorage.getItem('nastes_trophies') || '[]');
+var totalPts    = parseInt(localStorage.getItem('nastes_pts') || '0');
+var weekPts     = parseInt(localStorage.getItem('nastes_wpts') || '0');
+var weekStart   = localStorage.getItem('nastes_wstart') || '';
+var quizQs=[], quizIdx=0, quizScore=0, quizDone=false;
+
+var TODAY = new Date().toISOString().slice(0,10);
+
+function getWeekKey() {
+  var d=new Date(), day=d.getDay();
+  var m=new Date(d);
+  m.setDate(d.getDate()-(day===0?6:day-1));
+  return m.toISOString().slice(0,10);
+}
+var THIS_WEEK = getWeekKey();
+
+/* ── NAV ── */
+function toggleNav() {
+  var nav=document.getElementById('sidenav'), mask=document.getElementById('navMask'), b=document.getElementById('burger');
+  nav.classList.toggle('on'); mask.classList.toggle('on'); b.classList.toggle('open');
+  document.body.style.overflow = nav.classList.contains('on') ? 'hidden' : '';
+}
+
+/* ── TABS ── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name==='lb')     loadLB();
+  if (name==='streak') renderStreak();
+  if (name==='qotd')   renderQOTD();
+}
+
+/* ── NICKNAME ── */
+function checkNickname() { if (!nickname) document.getElementById('nicknameModal').classList.remove('hidden'); }
+function saveNickname() {
+  var v = document.getElementById('nicknameInput').value.trim();
+  if (!v||v.length<2) { alert('Please enter a nickname of at least 2 characters.'); return; }
+  nickname=v; localStorage.setItem('nastes_nick', nickname);
+  document.getElementById('nicknameModal').classList.add('hidden');
+  init();
+}
+
+/* ── STREAK ── */
+function updateStreak() {
+  if (lastStudy===TODAY) return;
+  var y=new Date(); y.setDate(y.getDate()-1);
+  var yStr=y.toISOString().slice(0,10);
+  if (lastStudy===yStr) streak++; else streak=1;
+  if (streak>bestStreak) { bestStreak=streak; localStorage.setItem('nastes_best', bestStreak); }
+  lastStudy=TODAY;
+  localStorage.setItem('nastes_streak', streak);
+  localStorage.setItem('nastes_lastday', TODAY);
+  checkTrophies();
+}
+
+function checkTrophies() {
+  [{days:3,id:'starter'},{days:7,id:'fire'},{days:14,id:'unstoppable'},{days:21,id:'champion'},{days:30,id:'legend'}].forEach(function(m){
+    if (streak>=m.days && trophies.indexOf(m.id)===-1) { trophies.push(m.id); localStorage.setItem('nastes_trophies', JSON.stringify(trophies)); }
+  });
+}
+
+function addPts(p) {
+  totalPts+=p; localStorage.setItem('nastes_pts', totalPts);
+  if (weekStart!==THIS_WEEK) { weekPts=0; weekStart=THIS_WEEK; localStorage.setItem('nastes_wstart', THIS_WEEK); }
+  weekPts+=p; localStorage.setItem('nastes_wpts', weekPts);
+  uploadScore();
+}
+
+function uploadScore() {
+  if (!nickname) return;
+  fetch(SB_URL+'/rest/v1/leaderboard', {
+    method: 'POST',
+    headers: { 'Authorization':'Bearer '+SB_KEY, 'apikey':SB_KEY, 'Content-Type':'application/json', 'Prefer':'resolution=merge-duplicates' },
+    body: JSON.stringify({ nickname:nickname, week_key:THIS_WEEK, week_pts:weekPts, total_pts:totalPts, streak:streak, trophies:JSON.stringify(trophies), updated:TODAY })
+  }).catch(function(){});
+}
+
+/* ── QOTD ── */
+function renderQOTD() {
+  var el = document.getElementById('qotdContent');
+  var doneKey = 'nastes_qotd_'+TODAY;
+  var done = localStorage.getItem(doneKey);
+  var idx = parseInt(TODAY.replace(/-/g,'')) % QB.length;
+  var q = QB[idx];
+  if (done) {
+    el.innerHTML = '<div class="already-done"><div class="big-icon">'+(done==='correct'?'✅':'📖')+'</div><h3>'+(done==='correct'?'Correct! Well done.':'Question answered for today.')+'</h3><p>Come back tomorrow for a new question. Streak: '+streak+' day'+(streak!==1?'s':'')+'.</p><div style="margin-top:20px;background:var(--bg-card);border:1px solid var(--border);padding:20px;text-align:left"><div class="qotd-course">'+q.course+' &mdash; '+q.topic+'</div><div class="qotd-question">'+q.q+'</div><div class="explanation-box show"><strong>Answer:</strong> '+q.o[q.a]+'<br><br>'+q.e+'</div></div></div>';
+    return;
+  }
+  var opts = q.o.map(function(opt,i){ return '<button class="option-btn" onclick="answerQOTD('+i+','+q.a+',\''+doneKey+'\')">'+opt+'</button>'; }).join('');
+  el.innerHTML = '<div class="qotd-card"><div class="qotd-tag">⭐ Question of the Day &mdash; '+TODAY+'</div><div class="qotd-course">'+q.dept+' &mdash; '+q.course+' &mdash; '+q.topic+'</div><div class="qotd-question">'+q.q+'</div><div class="options-grid" id="qotdOpts">'+opts+'</div><div class="explanation-box" id="qotdExp"><strong>Explanation:</strong> '+q.e+'</div></div><div style="font-size:0.8rem;color:var(--text-dim);text-align:center;margin-top:12px">🔥 Streak: <strong style="color:var(--accent-lit)">'+streak+' day'+(streak!==1?'s':'')+'</strong> &mdash; Correct answer = 5 points</div>';
+}
+
+function answerQOTD(chosen, correct, key) {
+  document.querySelectorAll('#qotdOpts .option-btn').forEach(function(b,i){ b.disabled=true; if(i===correct) b.classList.add('correct'); else if(i===chosen&&chosen!==correct) b.classList.add('wrong'); });
+  document.getElementById('qotdExp').classList.add('show');
+  var ok = chosen===correct;
+  localStorage.setItem(key, ok?'correct':'wrong');
+  updateStreak(); addPts(ok?5:2);
+  setTimeout(renderQOTD, 1800);
+}
+
+/* ── QUIZ ── */
+function populateCourseSelect() {
+  var sel = document.getElementById('quizCourse');
+  if (!sel) return;
+  var depts = {};
+  QB.forEach(function(q){ if(!depts[q.dept]) depts[q.dept]=[]; if(depts[q.dept].indexOf(q.course)===-1) depts[q.dept].push(q.course); });
+  var html = '<option value="all">All Departments Mixed</option>';
+  Object.keys(depts).sort().forEach(function(dept){
+    html += '<optgroup label="'+dept+'">';
+    depts[dept].sort().forEach(function(c){ html += '<option value="'+c+'">'+c+'</option>'; });
+    html += '</optgroup>';
+  });
+  sel.innerHTML = html;
+}
+
+function startQuiz() {
+  var course = document.getElementById('quizCourse').value;
+  var count  = parseInt(document.getElementById('quizCount').value);
+  var pool = course==='all' ? QB.slice() : QB.filter(function(q){return q.course===course;});
+  if (!pool.length) { alert('No questions for this selection yet. Try All Departments Mixed.'); return; }
+  pool = pool.sort(function(){return Math.random()-0.5;}).slice(0, Math.min(count,pool.length));
+  quizQs=pool; quizIdx=0; quizScore=0; quizDone=false;
+  updateStreak(); renderQuizQ();
+}
+
+function renderQuizQ() {
+  var el = document.getElementById('quizContent');
+  if (quizIdx>=quizQs.length) { renderQuizResult(el); return; }
+  var q = quizQs[quizIdx];
+  var pct = Math.round((quizIdx/quizQs.length)*100);
+  var opts = q.o.map(function(opt,i){ return '<button class="option-btn" onclick="answerQuiz('+i+')">'+opt+'</button>'; }).join('');
+  el.innerHTML = '<div class="quiz-progress"><div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="progress-text">'+(quizIdx+1)+'/'+quizQs.length+'</div></div><div class="qotd-card"><div class="qotd-course">'+q.dept+' &mdash; '+q.course+' &mdash; '+q.topic+'</div><div class="qotd-question">'+q.q+'</div><div class="options-grid" id="quizOpts">'+opts+'</div><div class="explanation-box" id="quizExp"><strong>Explanation:</strong> '+q.e+'</div></div><button class="start-quiz-btn" id="nxtBtn" onclick="nextQ()" style="display:none;margin-top:16px">'+(quizIdx+1<quizQs.length?'Next Question →':'See Results 🏆')+'</button>';
+  quizDone=false;
+}
+
+function answerQuiz(chosen) {
+  if (quizDone) return; quizDone=true;
+  var q=quizQs[quizIdx];
+  document.querySelectorAll('#quizOpts .option-btn').forEach(function(b,i){ b.disabled=true; if(i===q.a) b.classList.add('correct'); else if(i===chosen&&chosen!==q.a) b.classList.add('wrong'); });
+  if (chosen===q.a) quizScore++;
+  document.getElementById('quizExp').classList.add('show');
+  document.getElementById('nxtBtn').style.display='block';
+}
+
+function nextQ() { quizIdx++; renderQuizQ(); }
+
+function renderQuizResult(el) {
+  var pct = Math.round((quizScore/quizQs.length)*100);
+  var grade, color;
+  if (pct>=80){ grade='Excellent! 🏆'; color='var(--green)'; }
+  else if(pct>=60){ grade='Good effort ✅'; color='var(--accent-lit)'; }
+  else if(pct>=40){ grade='Keep studying 📖'; color='var(--gold)'; }
+  else { grade='Review your notes 🔍'; color='var(--red)'; }
+  var pts = pct===100?20:pct>=80?15:pct>=60?10:5;
+  addPts(pts);
+  el.innerHTML = '<div class="quiz-result"><div class="result-score">'+quizScore+'/'+quizQs.length+'</div><div class="result-label">'+pct+'% correct</div><div class="result-grade" style="color:'+color+'">'+grade+'</div><div style="font-size:0.82rem;color:var(--accent-lit);margin-bottom:20px">+'+pts+' points earned!</div><div><button class="retry-btn" onclick="startQuiz()">Try Again</button><button class="retry-btn" onclick="resetQuiz()">Pick Course</button></div></div>';
+}
+
+function resetQuiz() {
+  document.getElementById('quizContent').innerHTML = '<div class="quiz-setup"><label>Select Department or Course</label><select class="quiz-select" id="quizCourse"></select><label>Number of Questions</label><select class="quiz-select" id="quizCount"><option value="5">5 Questions</option><option value="10" selected>10 Questions</option><option value="15">15 Questions</option><option value="20">20 Questions</option></select><button class="start-quiz-btn" onclick="startQuiz()">Start Quiz ▶</button></div>';
+  populateCourseSelect();
+}
+
+/* ── STREAK PAGE ── */
+function renderStreak() {
+  var el = document.getElementById('streakContent');
+  var TLIST = [
+    {id:'starter',    name:'Getting Started', icon:'🌱', req:'3 day streak',  cls:''},
+    {id:'fire',       name:'On Fire',         icon:'🔥', req:'7 day streak',  cls:'earned'},
+    {id:'unstoppable',name:'Unstoppable',      icon:'💪', req:'14 day streak', cls:'earned'},
+    {id:'champion',   name:'NASTES Champion', icon:'🏆', req:'21 day streak', cls:'legendary'},
+    {id:'legend',     name:'NASTES Legend',   icon:'💎', req:'30 day streak', cls:'legendary'},
+    {id:'diamond',    name:'NASTES Diamond',  icon:'💎💎',req:'Top lb 2 weeks',cls:'diamond'}
+  ];
+  var fire = streak>=30?'💎':streak>=21?'🏆':streak>=7?'🔥':streak>=3?'🌱':'🌿';
+  var trophyHtml = TLIST.map(function(t){
+    var earned = trophies.indexOf(t.id)>-1;
+    return '<div class="trophy-card '+(earned?t.cls:'')+'"><div class="trophy-icon">'+t.icon+'</div><div class="trophy-name">'+t.name+'</div><div class="trophy-req">'+(earned?'EARNED':t.req)+'</div></div>';
+  }).join('');
+  el.innerHTML = '<div class="streak-hero"><div class="streak-fire">'+fire+'</div><div class="streak-count">'+streak+'</div><div class="streak-label">Day'+(streak!==1?'s':'')+' Streak</div><div class="streak-best">Best: <span>'+bestStreak+' days</span></div></div><div style="background:var(--bg-card);border:1px solid var(--border);padding:16px;margin-bottom:24px;display:flex;justify-content:space-between"><div><div style="font-family:Space Mono,monospace;font-size:0.65rem;color:var(--accent-lit);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Total Points</div><div style="font-family:Syne,sans-serif;font-weight:800;font-size:1.6rem;color:var(--text)">'+totalPts+'</div></div><div style="text-align:right"><div style="font-family:Space Mono,monospace;font-size:0.65rem;color:var(--accent-lit);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">This Week</div><div style="font-family:Syne,sans-serif;font-weight:800;font-size:1.6rem;color:var(--accent-lit)">'+weekPts+'</div></div></div><h3 style="font-family:Syne,sans-serif;font-weight:700;font-size:0.95rem;color:var(--text);margin-bottom:16px">🏆 Trophy Cabinet</h3><div class="trophy-grid">'+trophyHtml+'</div><div style="background:rgba(27,67,50,0.08);border:1px solid rgba(27,67,50,0.2);padding:16px;font-size:0.82rem;color:var(--text-dim)"><strong style="color:var(--accent-lit)">How to earn points:</strong><br>Question of the Day correct &rarr; 5 pts (wrong = 2 pts)<br>Quiz 80%+ &rarr; 15 pts &nbsp;|&nbsp; 100% &rarr; 20 pts<br>Complete any quiz &rarr; 5 to 10 pts based on score</div>';
+}
+
+/* ── LEADERBOARD ── */
+function loadLB() {
+  var el = document.getElementById('lbContent');
+  el.innerHTML = '<div class="lb-loading">Loading leaderboard...</div>';
+  fetch(SB_URL+'/rest/v1/leaderboard?week_key=eq.'+encodeURIComponent(THIS_WEEK)+'&order=week_pts.desc&limit=100', {
+    headers: { 'Authorization':'Bearer '+SB_KEY, 'apikey':SB_KEY, 'Content-Type':'application/json' }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    var entries = Array.isArray(data) ? data.map(function(row){
+      return { nickname:row.nickname, weekPts:row.week_pts||0, totalPts:row.total_pts||0, streak:row.streak||0, trophies:row.trophies?JSON.parse(row.trophies):[] };
+    }) : [];
+    if (nickname && !entries.find(function(e){return e.nickname===nickname;})) {
+      entries.push({ nickname:nickname, weekPts:weekPts, totalPts:totalPts, streak:streak, trophies:trophies });
+      entries.sort(function(a,b){return(b.weekPts||0)-(a.weekPts||0);});
+    }
+    var myRank = entries.findIndex(function(e){return e.nickname===nickname;})+1;
+    var myEntry = entries.find(function(e){return e.nickname===nickname;});
+    var top10 = entries.slice(0,10);
+    var rk = ['🥇','🥈','🥉'];
+    var rows = top10.length ? top10.map(function(e,i){
+      var isMe = e.nickname===nickname;
+      var top = e.trophies&&e.trophies.indexOf('legend')>-1?'💎':e.trophies&&e.trophies.indexOf('champion')>-1?'🏆':e.trophies&&e.trophies.indexOf('fire')>-1?'🔥':'';
+      return '<tr class="'+(isMe?'my-row':'')+'"><td>'+(i<3?rk[i]:i+1)+'</td><td><span class="lb-name">'+e.nickname+(isMe?' (you)':'')+'</span></td><td><span class="lb-pts">'+(e.weekPts||0)+'</span></td><td style="color:var(--accent-lit);font-size:0.78rem">'+(e.streak||0)+'d</td><td>'+top+'</td></tr>';
+    }).join('') : '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-dim)">No entries yet this week. Be the first!</td></tr>';
+    el.innerHTML = '<div class="lb-header"><h3>🏆 Weekly Leaderboard</h3><div class="lb-reset-info">Resets every Monday &bull; Top 2 weeks = NASTES Diamond 💎</div></div>'+(nickname?'<div class="lb-my-rank"><div class="lb-my-rank-left">Your rank: <strong>#'+(myRank||'?')+'</strong> as <strong>'+nickname+'</strong></div><div class="lb-my-rank-score">'+(myEntry?myEntry.weekPts:weekPts)+' pts</div></div>':'')+'<table class="lb-table"><thead><tr><th>#</th><th>Student</th><th>Pts</th><th>Streak</th><th>Trophy</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  })
+  .catch(function(){
+    el.innerHTML = '<div class="lb-loading">Could not load leaderboard. Check your connection.</div>';
+  });
+}
+
+/* ── INIT ── */
+function init() {
+  checkTrophies(); renderQOTD(); populateCourseSelect();
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  if (weekStart!==THIS_WEEK) { weekPts=0; weekStart=THIS_WEEK; localStorage.setItem('nastes_wstart',THIS_WEEK); localStorage.setItem('nastes_wpts','0'); }
+  checkNickname();
+  if (nickname) init();
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/nastestpi25-26study/sw.js');
+}
+</script>
+
+</body>
+</html>
