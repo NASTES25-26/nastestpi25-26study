@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | NASTES Research Hub</title>
+<meta name="theme-color" content="#080808">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;
+  --panel:rgba(255,255,255,0.03);
+  --panel-border:rgba(27,67,50,0.28);
+  --accent:#1B4332;
+  --accent-lit:#3ea373;
+  --gold:#c9a24a;
+  --red:#a33;
+  --text:#f4f4f0;
+  --text-dim:#9a9a92;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.6;min-height:100vh}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#111}
+::-webkit-scrollbar-thumb{background:var(--accent-lit);border-radius:3px}
+h1,h2,h3{font-family:'Syne',sans-serif}
+
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-screen.hidden{display:none}
+.login-box{background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;padding:36px 28px;width:92%;max-width:380px;text-align:center}
+.login-title{font-weight:800;font-size:22px;margin-bottom:4px}
+.login-sub{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px}
+.login-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 14px;color:var(--text);font-size:14px;margin-bottom:10px;font-family:'DM Sans',sans-serif}
+.login-input:focus{outline:none;border-color:var(--accent-lit)}
+.login-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:12px;font-weight:600;cursor:pointer;margin-top:6px}
+.login-btn:hover{background:var(--accent-lit)}
+.login-error{color:#e77;font-size:12px;margin-top:12px;display:none}
+
+/* NAVBAR */
+.navbar{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--panel-border);padding:14px 5%;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-weight:800;font-size:15px}
+.nav-role{font-family:'Space Mono',monospace;font-size:10px;color:var(--accent-lit);letter-spacing:0.08em;text-transform:uppercase}
+.nav-logout{background:transparent;border:1px solid var(--red);color:#e88;border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer}
+
+main{max-width:1100px;margin:0 auto;padding:24px 5% 80px}
+.page-title{font-weight:800;font-size:26px;margin-bottom:20px}
+
+/* TABS */
+.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:2px solid var(--panel-border);margin-bottom:24px}
+.tab-btn{background:none;border:none;border-bottom:3px solid transparent;color:var(--text-dim);padding:12px 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.tab-btn.active{color:var(--accent-lit);border-bottom-color:var(--accent-lit)}
+.tab-btn.disabled{opacity:0.4;cursor:not-allowed}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* SECTIONS */
+.section{background:var(--panel);border:1px solid var(--panel-border);border-radius:12px;padding:22px;margin-bottom:20px}
+.section-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--text-dim);margin-bottom:16px}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.form-row.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column}
+.form-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
+.form-input,.form-select,.form-textarea{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--accent-lit)}
+.form-textarea{resize:vertical;min-height:100px}
+.form-check{display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-lit)}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed}
+.btn-secondary{background:rgba(201,162,74,0.12);color:var(--gold);border:1px solid rgba(201,162,74,0.35)}
+.btn-danger{background:rgba(170,51,51,0.12);color:#e88;border:1px solid rgba(170,51,51,0.35)}
+.btn-block{width:100%;justify-content:center}
+
+/* DROP ZONE */
+.drop-zone{border:2px dashed var(--panel-border);border-radius:10px;padding:22px;text-align:center;cursor:pointer;margin-bottom:14px}
+.drop-zone:hover{border-color:var(--accent-lit)}
+.drop-sub{font-size:11px;color:var(--text-dim);margin-top:4px}
+
+/* LIST */
+.item-list{display:flex;flex-direction:column;gap:8px}
+.list-item{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.item-name{font-weight:600;font-size:13px}
+.item-meta{font-size:11px;color:var(--text-dim);margin-top:2px}
+.item-actions{display:flex;gap:6px;flex-shrink:0}
+.item-actions .btn{padding:6px 10px;font-size:11px}
+.empty-state{text-align:center;padding:20px;color:var(--text-dim);font-size:13px}
+.master-badge{display:inline-block;background:var(--gold);color:#080808;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-left:6px}
+.special-badge{display:inline-block;background:var(--red);color:#fff;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-left:6px}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:12px 20px;border-radius:8px;display:none;z-index:1000;font-size:13px;max-width:90%;text-align:center}
+
+@media(max-width:640px){
+  .form-row{grid-template-columns:1fr}
+  .section{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-title">NASTES Admin</div>
+    <div class="login-sub">Era of Unity and Advancement</div>
+    <input type="email" class="login-input" id="loginEmail" placeholder="Officer email" autocomplete="username">
+    <input type="password" class="login-input" id="loginPassword" placeholder="Password" autocomplete="current-password">
+    <button class="login-btn" onclick="handleLogin()">Log In</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar" style="display:none">
+  <div>
+    <div class="nav-brand">NASTES Admin</div>
+    <div class="nav-role" id="adminRole"></div>
+  </div>
+  <button class="nav-logout" onclick="handleLogout()">Log Out</button>
+</nav>
+
+<main id="mainContent" style="display:none">
+  <div class="page-title">Admin Dashboard</div>
+
+  <div class="tabs" id="tabRow">
+    <button class="tab-btn active" onclick="switchTab('pq')">Past Questions</button>
+    <button class="tab-btn" onclick="switchTab('quiz')">Study &amp; Quiz</button>
+    <button class="tab-btn" onclick="switchTab('calendar')">Academic Calendar</button>
+    <button class="tab-btn" onclick="switchTab('news')">News &amp; Events</button>
+    <button class="tab-btn" onclick="switchTab('announce')">Announcements</button>
+    <button class="tab-btn" onclick="switchTab('broadcast')">Broadcast</button>
+    <button class="tab-btn" id="adminUsersTabBtn" onclick="switchTab('users')">Admin Users</button>
+  </div>
+
+  <!-- PAST QUESTIONS -->
+  <div class="tab-panel active" id="pq-tab">
+    <div class="section">
+      <div class="section-title">Upload Past Question</div>
+      <div class="section-sub">SLT posts go to the legacy SLT database automatically. Everything else goes to NASTES.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Department</label>
+          <select class="form-select" id="pq-dept" onchange="pqDeptChanged()">
+            <option value="physics">Physics</option>
+            <option value="biology">Biology</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="pharma">Pharmaceutical Technology</option>
+            <option value="slt">Science Lab Technology (SLT)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Level</label>
+          <select class="form-select" id="pq-level"></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Semester</label>
+          <input class="form-input" id="pq-semester" placeholder="e.g. First Semester">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Year</label>
+          <input class="form-input" id="pq-year" placeholder="e.g. 2024">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Course Code</label>
+          <input class="form-input" id="pq-code" placeholder="e.g. PHM 111">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <input class="form-input" id="pq-subject" placeholder="e.g. Dosage Forms">
+        </div>
+      </div>
+      <div class="drop-zone" id="pq-drop" onclick="document.getElementById('pq-file').click()">
+        <div id="pq-drop-label">Tap to choose a file (image or PDF)</div>
+        <div class="drop-sub">Uploads to the past-questions bucket</div>
+      </div>
+      <input type="file" id="pq-file" style="display:none" accept="image/*,.pdf" onchange="pqFileSelected()">
+      <button class="btn btn-primary btn-block" id="pq-upload-btn" onclick="uploadPastQuestion()">Upload</button>
+    </div>
+    <div class="section">
+      <div class="section-title">Existing Past Questions</div>
+      <div class="item-list" id="pq-list"><div class="empty-state">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- STUDY & QUIZ -->
+  <div class="tab-panel" id="quiz-tab">
+    <div class="section">
+      <div class="section-title">Add Quiz Question</div>
+      <div class="section-sub">New questions are saved to a quiz_questions table. Note: study-quiz.html currently uses a hardcoded question list — it needs a follow-up update to read from this table before these show up live.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Department</label>
+          <input class="form-input" id="qz-dept" placeholder="e.g. Pharmaceutical Technology">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Course</label>
+          <input class="form-input" id="qz-course" placeholder="e.g. PHM 111">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Topic</label>
+        <input class="form-input" id="qz-topic" placeholder="e.g. Dosage Forms">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Question</label>
+        <textarea class="form-textarea" id="qz-question" placeholder="Question text"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Option A</label><input class="form-input" id="qz-o0"></div>
+        <div class="form-group"><label class="form-label">Option B</label><input class="form-input" id="qz-o1"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Option C</label><input class="form-input" id="qz-o2"></div>
+        <div class="form-group"><label class="form-label">Option D</label><input class="form-input" id="qz-o3"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Correct Answer</label>
+          <select class="form-select" id="qz-answer">
+            <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Explanation</label>
+          <input class="form-input" id="qz-explain" placeholder="Shown after answering">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="addQuizQuestion()">Add Question</button>
+    </div>
+    <div class="section">
+      <div class="section-title">Question Bank</div>
+      <div class="item-list" id="qz-list"><div class="empty-state">Loading…</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Leaderboard</div>
+      <div class="section-sub">This week's standings. Remove an entry if needed (e.g. duplicate nickname).</div>
+      <div class="item-list" id="lb-list"><div class="empty-state">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ACADEMIC CALENDAR -->
+  <div class="tab-panel" id="calendar-tab">
+    <div class="section">
+      <div class="section-title">Upload Calendar</div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Label</label>
+        <input class="form-input" id="cal-label" placeholder="e.g. 2025/2026 First Semester">
+      </div>
+      <div class="drop-zone" id="cal-drop" onclick="document.getElementById('cal-file').click()">
+        <div id="cal-drop-label">Tap to choose a calendar image</div>
+      </div>
+      <input type="file" id="cal-file" style="display:none" accept="image/*" onchange="calFileSelected()">
+      <button class="btn btn-primary btn-block" onclick="uploadCalendar()">Upload</button>
+    </div>
+    <div class="section">
+      <div class="section-title">Uploaded Calendars</div>
+      <div class="item-list" id="cal-list"><div class="empty-state">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- NEWS & EVENTS -->
+  <div class="tab-panel" id="news-tab">
+    <div class="section">
+      <div class="section-title">Post Update</div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Title</label>
+        <input class="form-input" id="nw-title" placeholder="Headline">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Body</label>
+        <textarea class="form-textarea" id="nw-body" placeholder="Update text"></textarea>
+      </div>
+      <div class="drop-zone" id="nw-drop" onclick="document.getElementById('nw-file').click()">
+        <div id="nw-drop-label">Tap to attach an image (optional)</div>
+      </div>
+      <input type="file" id="nw-file" style="display:none" accept="image/*" onchange="nwFileSelected()">
+      <button class="btn btn-primary btn-block" onclick="postUpdate()">Post Update</button>
+    </div>
+    <div class="section">
+      <div class="section-title">Add Gallery Photo</div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Description</label>
+        <input class="form-input" id="gal-desc" placeholder="e.g. NASTES Cultural Day 2025">
+      </div>
+      <div class="drop-zone" id="gal-drop" onclick="document.getElementById('gal-file').click()">
+        <div id="gal-drop-label">Tap to choose a photo</div>
+      </div>
+      <input type="file" id="gal-file" style="display:none" accept="image/*" onchange="galFileSelected()">
+      <button class="btn btn-secondary btn-block" onclick="uploadGalleryPhoto()">Add to Gallery</button>
+    </div>
+    <div class="section">
+      <div class="section-title">Updates</div>
+      <div class="item-list" id="nw-list"><div class="empty-state">Loading…</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Gallery</div>
+      <div class="item-list" id="gal-list"><div class="empty-state">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ANNOUNCEMENTS -->
+  <div class="tab-panel" id="announce-tab">
+    <div class="section">
+      <div class="section-title">New Announcement</div>
+      <div class="section-sub">Special overrides everything in the banner and the homepage media box. Only one Special can be active at a time.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select class="form-select" id="an-type">
+            <option value="normal">Normal</option>
+            <option value="special">Special</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Format</label>
+          <select class="form-select" id="an-format" onchange="anFormatChanged()">
+            <option value="text">Text only</option>
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+            <option value="flyer">Flyer</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Text</label>
+        <textarea class="form-textarea" id="an-text" placeholder="Announcement text"></textarea>
+      </div>
+      <div class="drop-zone" id="an-drop" style="display:none" onclick="document.getElementById('an-file').click()">
+        <div id="an-drop-label">Tap to choose media</div>
+      </div>
+      <input type="file" id="an-file" style="display:none" accept="image/*,video/*" onchange="anFileSelected()">
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Expiry Date (optional)</label>
+        <input type="date" class="form-input" id="an-expiry">
+      </div>
+      <button class="btn btn-primary btn-block" onclick="postAnnouncement()">Post Announcement</button>
+    </div>
+    <div class="section">
+      <div class="section-title">Active &amp; Recent Announcements</div>
+      <div class="item-list" id="an-list"><div class="empty-state">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- BROADCAST -->
+  <div class="tab-panel" id="broadcast-tab">
+    <div class="section">
+      <div class="section-title">Send Push Notification</div>
+      <div class="section-sub">Goes out to every device that has enabled notifications on the site, even if the site is closed. Requires the send-push Edge Function to be deployed on your Supabase project.</div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Title</label>
+        <input class="form-input" id="bc-title" placeholder="e.g. Award Night this Friday!">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Message</label>
+        <textarea class="form-textarea" id="bc-body" placeholder="Notification text"></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Link (optional, opens when tapped)</label>
+        <input class="form-input" id="bc-link" placeholder="e.g. /nastestpi25-26study/Pages/news-events.html">
+      </div>
+      <button class="btn btn-primary btn-block" id="bc-send-btn" onclick="sendBroadcast()">Send to All Subscribers</button>
+      <div class="drop-sub" id="bc-count" style="margin-top:10px">Loading subscriber count…</div>
+    </div>
+  </div>
+
+  <!-- ADMIN USERS (master only) -->
+  <div class="tab-panel" id="users-tab">
+    <div class="section">
+      <div class="section-title">Add Officer</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="au-email" placeholder="officer@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Temporary Password</label>
+          <input class="form-input" id="au-password" placeholder="At least 6 characters">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="addAdmin()">Add Officer</button>
+    </div>
+    <div class="section">
+      <div class="section-title">Officers</div>
+      <div class="item-list" id="au-list"><div class="empty-state">Loading…</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Change My Password</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Current Password</label><input type="password" class="form-input" id="pw-old"></div>
+        <div class="form-group"><label class="form-label">New Password</label><input type="password" class="form-input" id="pw-new"></div>
+      </div>
+      <button class="btn btn-secondary btn-block" onclick="changeMyPassword()">Update Password</button>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ===== SUPABASE CONFIG =====
+var NASTES_URL = 'https://ixsmyvwuavlxxywzgujn.supabase.co';
+var NASTES_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4c215dnd1YXZseHh5d3pndWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjAxMDAsImV4cCI6MjA5ODMzNjEwMH0.U2R4PB-YRdpE7NTYCheeh_G9insrmMxKk_PA1TKSVZM';
+var SLT_URL = 'https://ayoofobsthcnqzguuxmm.supabase.co';
+var SLT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5b29mb2JzdGhjbnF6Z3V1eG1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MjQwODgsImV4cCI6MjA5NDUwMDA4OH0.AHK34Dmc3WiHloX3IYBJoLTqjDKHBp6lvrWfrrAVF_M';
+
+var DEPT_LEVELS = {
+  physics:['hnd1','hnd2'], biology:['hnd1','hnd2'], chemistry:['hnd1','hnd2'],
+  pharma:['hnd1','hnd2'], slt:['nd1','nd2']
+};
+var LEVEL_LABELS = { nd1:'ND 1', nd2:'ND 2', hnd1:'HND 1', hnd2:'HND 2' };
+
+var currentAdmin = { email:null, isMaster:false };
+var pqFile=null, calFile=null, nwFile=null, galFile=null, anFile=null;
+
+// ===== GENERIC SUPABASE HELPERS (NASTES project) =====
+function sbHeaders(json){
+  var h = { 'Authorization':'Bearer '+NASTES_KEY, 'apikey':NASTES_KEY };
+  if (json) { h['Content-Type']='application/json'; h['Prefer']='return=representation'; }
+  return h;
+}
+async function sbFetch(table, query, base, key){
+  base = base || NASTES_URL; key = key || NASTES_KEY;
+  try{
+    var r = await fetch(base+'/rest/v1/'+table+'?'+(query||''), { headers:{ 'Authorization':'Bearer '+key, 'apikey':key } });
+    var d = await r.json();
+    return Array.isArray(d) ? d : [];
+  }catch(e){ console.error(e); return []; }
+}
+async function sbInsert(table, data, base, key){
+  base = base || NASTES_URL; key = key || NASTES_KEY;
+  try{
+    var r = await fetch(base+'/rest/v1/'+table, {
+      method:'POST',
+      headers:{ 'Authorization':'Bearer '+key, 'apikey':key, 'Content-Type':'application/json', 'Prefer':'return=representation' },
+      body: JSON.stringify(data)
+    });
+    return r.ok;
+  }catch(e){ console.error(e); return false; }
+}
+async function sbUpdate(table, id, data){
+  try{
+    var r = await fetch(NASTES_URL+'/rest/v1/'+table+'?id=eq.'+id, {
+      method:'PATCH', headers:sbHeaders(true), body: JSON.stringify(data)
+    });
+    return r.ok;
+  }catch(e){ console.error(e); return false; }
+}
+async function sbDelete(table, id){
+  try{
+    var r = await fetch(NASTES_URL+'/rest/v1/'+table+'?id=eq.'+id, { method:'DELETE', headers:sbHeaders() });
+    return r.ok;
+  }catch(e){ console.error(e); return false; }
+}
+async function uploadFile(bucket, file){
+  var ext = file.name.split('.').pop();
+  var filename = Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
+  try{
+    var r = await fetch(NASTES_URL+'/storage/v1/object/'+bucket+'/'+filename, {
+      method:'POST', headers:{ 'Authorization':'Bearer '+NASTES_KEY, 'apikey':NASTES_KEY, 'Content-Type':file.type }, body:file
+    });
+    if (!r.ok) return null;
+    return NASTES_URL+'/storage/v1/object/public/'+bucket+'/'+filename;
+  }catch(e){ console.error(e); return null; }
+}
+
+// ===== LOGIN (per officer, sessionStorage) =====
+async function handleLogin(){
+  var email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  var password = document.getElementById('loginPassword').value.trim();
+  var err = document.getElementById('loginError');
+  err.style.display='none';
+  if (!email || !password){ err.textContent='Enter your email and password'; err.style.display='block'; return; }
+  var admins = await sbFetch('admin_users', 'select=*&email=eq.'+encodeURIComponent(email));
+  if (!admins.length){ err.textContent='No account found for that email'; err.style.display='block'; return; }
+  var a = admins[0];
+  if (a.password !== password || !a.is_active){ err.textContent='Incorrect password or account disabled'; err.style.display='block'; return; }
+  currentAdmin.email = email; currentAdmin.isMaster = !!a.is_master;
+  sessionStorage.setItem('nastes_admin', JSON.stringify(currentAdmin));
+  enterDashboard();
+}
+function enterDashboard(){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('navbar').style.display='flex';
+  document.getElementById('mainContent').style.display='block';
+  document.getElementById('adminRole').textContent = currentAdmin.email + ' · ' + (currentAdmin.isMaster ? 'Master Admin' : 'Officer');
+  if (!currentAdmin.isMaster){
+    var b = document.getElementById('adminUsersTabBtn');
+    b.classList.add('disabled'); b.onclick=null;
+  }
+  loadAllData();
+  setupPushUI();
+}
+function handleLogout(){
+  currentAdmin = { email:null, isMaster:false };
+  sessionStorage.removeItem('nastes_admin');
+  location.reload();
+}
+window.addEventListener('load', function(){
+  var saved = sessionStorage.getItem('nastes_admin');
+  if (saved){ currentAdmin = JSON.parse(saved); enterDashboard(); }
+  pqDeptChanged();
+});
+
+// ===== TABS =====
+function switchTab(tab){
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById(tab+'-tab').classList.add('active');
+  event.target.classList.add('active');
+}
+function loadAllData(){
+  loadPastQuestions(); loadQuizQuestions(); loadLeaderboard();
+  loadCalendars(); loadNews(); loadGallery(); loadAnnouncements();
+  loadAdmins();
+}
+function showToast(msg, isError){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.style.display='block';
+  t.style.background = isError ? '#a33' : '#1B4332';
+  setTimeout(function(){ t.style.display='none'; }, 3500);
+}
+
+// ===== PAST QUESTIONS =====
+function pqDeptChanged(){
+  var dept = document.getElementById('pq-dept').value;
+  var lvl = document.getElementById('pq-level');
+  lvl.innerHTML='';
+  DEPT_LEVELS[dept].forEach(function(l){
+    var o = document.createElement('option'); o.value=l; o.textContent=LEVEL_LABELS[l]; lvl.appendChild(o);
+  });
+}
+function pqFileSelected(){
+  pqFile = document.getElementById('pq-file').files[0];
+  document.getElementById('pq-drop-label').textContent = pqFile ? pqFile.name : 'Tap to choose a file';
+}
+async function uploadPastQuestion(){
+  var dept = document.getElementById('pq-dept').value;
+  var level = document.getElementById('pq-level').value;
+  var semester = document.getElementById('pq-semester').value.trim();
+  var year = document.getElementById('pq-year').value.trim();
+  var code = document.getElementById('pq-code').value.trim();
+  var subject = document.getElementById('pq-subject').value.trim();
+  if (!pqFile){ showToast('Choose a file first', true); return; }
+  if (!subject){ showToast('Enter a subject', true); return; }
+  var btn = document.getElementById('pq-upload-btn');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  var isSlt = dept === 'slt';
+  var bucket = 'past-questions';
+  var url;
+  if (isSlt){
+    var ext = pqFile.name.split('.').pop();
+    var filename = Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
+    try{
+      var r = await fetch(SLT_URL+'/storage/v1/object/'+bucket+'/'+filename, {
+        method:'POST', headers:{ 'Authorization':'Bearer '+SLT_KEY, 'apikey':SLT_KEY, 'Content-Type':pqFile.type }, body:pqFile
+      });
+      url = r.ok ? SLT_URL+'/storage/v1/object/public/'+bucket+'/'+filename : null;
+    }catch(e){ url = null; }
+  } else {
+    url = await uploadFile(bucket, pqFile);
+  }
+  if (!url){ showToast('Upload failed', true); btn.disabled=false; btn.textContent='Upload'; return; }
+  var row = { subject:subject, code:code, level:level, year:year, semester:semester, uri:url };
+  var ok;
+  if (isSlt){
+    ok = await sbInsert('past_questions', row, SLT_URL, SLT_KEY);
+  } else {
+    row.dept = dept;
+    ok = await sbInsert('past_questions', row);
+  }
+  btn.disabled=false; btn.textContent='Upload';
+  if (ok){
+    showToast('Past question uploaded');
+    document.getElementById('pq-subject').value=''; document.getElementById('pq-code').value='';
+    pqFile=null; document.getElementById('pq-file').value=''; document.getElementById('pq-drop-label').textContent='Tap to choose a file (image or PDF)';
+    loadPastQuestions();
+  } else showToast('Save failed', true);
+}
+async function loadPastQuestions(){
+  var nastes = await sbFetch('past_questions', 'select=*&order=id.desc&limit=50');
+  var slt = await sbFetch('past_questions', 'select=*&order=id.desc&limit=50', SLT_URL, SLT_KEY);
+  slt.forEach(function(r){ r.dept='slt'; });
+  var all = nastes.concat(slt).sort(function(a,b){ return (b.id||0)-(a.id||0); });
+  var list = document.getElementById('pq-list');
+  if (!all.length){ list.innerHTML='<div class="empty-state">No past questions yet.</div>'; return; }
+  list.innerHTML = all.map(function(r){
+    return '<div class="list-item"><div><div class="item-name">'+(r.code?r.code+' — ':'')+(r.subject||'Untitled')+'</div>'+
+      '<div class="item-meta">'+(r.dept||'')+' · '+(r.level||'')+' · '+(r.semester||'')+' '+(r.year||'')+'</div></div>'+
+      '<div class="item-actions"><button class="btn btn-danger" onclick="deletePastQuestion('+r.id+',\''+(r.dept==='slt'?'slt':'nastes')+'\')">Delete</button></div></div>';
+  }).join('');
+}
+async function deletePastQuestion(id, source){
+  if (!confirm('Delete this past question?')) return;
+  var ok = source==='slt' ? await (async function(){
+    var r = await fetch(SLT_URL+'/rest/v1/past_questions?id=eq.'+id, { method:'DELETE', headers:{ 'Authorization':'Bearer '+SLT_KEY, 'apikey':SLT_KEY } });
+    return r.ok;
+  })() : await sbDelete('past_questions', id);
+  if (ok){ showToast('Deleted'); loadPastQuestions(); } else showToast('Delete failed', true);
+}
+
+// ===== STUDY & QUIZ =====
+async function addQuizQuestion(){
+  var opts = [document.getElementById('qz-o0').value.trim(), document.getElementById('qz-o1').value.trim(),
+              document.getElementById('qz-o2').value.trim(), document.getElementById('qz-o3').value.trim()];
+  var q = document.getElementById('qz-question').value.trim();
+  if (!q || opts.some(function(o){return !o;})){ showToast('Fill in the question and all four options', true); return; }
+  var row = {
+    dept: document.getElementById('qz-dept').value.trim(),
+    course: document.getElementById('qz-course').value.trim(),
+    topic: document.getElementById('qz-topic').value.trim(),
+    question: q,
+    options: JSON.stringify(opts),
+    answer_index: parseInt(document.getElementById('qz-answer').value, 10),
+    explanation: document.getElementById('qz-explain').value.trim()
+  };
+  var ok = await sbInsert('quiz_questions', row);
+  if (ok){
+    showToast('Question added');
+    ['qz-dept','qz-course','qz-topic','qz-question','qz-o0','qz-o1','qz-o2','qz-o3','qz-explain'].forEach(function(id){ document.getElementById(id).value=''; });
+    loadQuizQuestions();
+  } else showToast('Save failed — the quiz_questions table may not exist yet', true);
+}
+async function loadQuizQuestions(){
+  var qs = await sbFetch('quiz_questions', 'select=*&order=id.desc&limit=50');
+  var list = document.getElementById('qz-list');
+  if (!qs.length){ list.innerHTML='<div class="empty-state">No questions yet.</div>'; return; }
+  list.innerHTML = qs.map(function(r){
+    return '<div class="list-item"><div><div class="item-name">'+r.question+'</div>'+
+      '<div class="item-meta">'+(r.dept||'')+' · '+(r.course||'')+'</div></div>'+
+      '<div class="item-actions"><button class="btn btn-danger" onclick="deleteQuizQuestion('+r.id+')">Delete</button></div></div>';
+  }).join('');
+}
+async function deleteQuizQuestion(id){
+  if (!confirm('Delete this question?')) return;
+  var ok = await sbDelete('quiz_questions', id);
+  if (ok){ showToast('Deleted'); loadQuizQuestions(); } else showToast('Delete failed', true);
+}
+async function loadLeaderboard(){
+  var rows = await sbFetch('leaderboard', 'select=*&order=week_pts.desc&limit=30');
+  var list = document.getElementById('lb-list');
+  if (!rows.length){ list.innerHTML='<div class="empty-state">No leaderboard entries yet.</div>'; return; }
+  list.innerHTML = rows.map(function(r){
+    return '<div class="list-item"><div><div class="item-name">'+r.nickname+'</div>'+
+      '<div class="item-meta">Week '+(r.week_pts||0)+' pts · Total '+(r.total_pts||0)+' pts · Streak '+(r.streak||0)+'</div></div>'+
+      '<div class="item-actions"><button class="btn btn-danger" onclick="deleteLeaderboardEntry('+r.id+')">Remove</button></div></div>';
+  }).join('');
+}
+async function deleteLeaderboardEntry(id){
+  if (!confirm('Remove this leaderboard entry?')) return;
+  var ok = await sbDelete('leaderboard', id);
+  if (ok){ showToast('Removed'); loadLeaderboard(); } else showToast('Failed', true);
+}
+
+// ===== ACADEMIC CALENDAR =====
+function calFileSelected(){
+  calFile = document.getElementById('cal-file').files[0];
+  document.getElementById('cal-drop-label').textContent = calFile ? calFile.name : 'Tap to choose a calendar image';
+}
+async function uploadCalendar(){
+  var label = document.getElementById('cal-label').value.trim();
+  if (!calFile || !label){ showToast('Add a label and choose an image', true); return; }
+  var url = await uploadFile('academic-calendar', calFile);
+  if (!url){ showToast('Upload failed', true); return; }
+  var ok = await sbInsert('academic_calendar', { label:label, image_url:url });
+  if (ok){
+    showToast('Calendar uploaded');
+    document.getElementById('cal-label').value=''; calFile=null; document.getElementById('cal-file').value='';
+    document.getElementById('cal-drop-label').textContent='Tap to choose a calendar image';
+    loadCalendars();
+  } else showToast('Save failed', true);
+}
+async function loadCalendars(){
+  var rows = await sbFetch('academic_calendar', 'select=*&order=id.desc');
+  var list = document.getElementById('cal-list');
+  if (!rows.length){ list.innerHTML='<div class="empty-state">No calendars uploaded yet.</div>'; return; }
+  list.innerHTML = rows.map(function(r){
+    return '<div class="list-item"><div class="item-name">'+r.label+'</div>'+
+      '<div class="item-actions"><button class="btn btn-danger" onclick="deleteCalendar('+r.id+')">Delete</button></div></div>';
+  }).join('');
+}
+async function deleteCalendar(id){
+  if (!confirm('Delete this calendar?')) return;
+  var ok = await sbDelete('academic_calendar', id);
+  if (ok){ showToast('Deleted'); loadCalendars(); } else showToast('Failed', true);
+}
+
+// ===== NEWS & EVENTS =====
+function nwFileSelected(){
+  nwFile = document.getElementById('nw-file').files[0];
+  document.getElementById('nw-drop-label').textContent = nwFile ? nwFile.name : 'Tap to attach an image (optional)';
+}
+async function postUpdate(){
+  var title = document.getElementById('nw-title').value.trim();
+  var body = document.getElementById('nw-body').value.trim();
+  if (!title || !body){ showToast('Add a title and body', true); return; }
+  var imageUrl = null;
+  if (nwFile){ imageUrl = await uploadFile('news-events', nwFile); }
+  var ok = await sbInsert('news_events', { type:'update', title:title, body:body, image_url:imageUrl });
+  if (ok){
+    showToast('Update posted');
+    document.getElementById('nw-title').value=''; document.getElementById('nw-body').value='';
+    nwFile=null; document.getElementById('nw-file').value=''; document.getElementById('nw-drop-label').textContent='Tap to attach an image (optional)';
+    loadNews();
+  } else showToast('Post failed', true);
+}
+async function loadNews(){
+  var rows = await sbFetch('news_events', "select=*&type=eq.update&order=id.desc");
+  var list = document.getElementById('nw-list');
+  if (!rows.length){ list.innerHTML='<div class="empty-state">No updates yet.</div>'; return; }
+  list.innerHTML = rows.map(function(r){
+    return '<div class="list-item"><div><div class="item-name">'+r.title+'</div><div class="item-meta">'+(r.body||'').slice(0,60)+'</div></div>'+
+      '<div class="item-actions"><button class="btn btn-danger" onclick="deleteNews('+r.id+')">Delete</button></div></div>';
+  }).join('');
+}
+function galFileSelected(){
+  galFile = document.getElementById('gal-file').files[0];
+  document.getElementById('gal-drop-label').textContent = galFile ? galFile.name : 'Tap to choose a photo';
+}
+async function uploadGalleryPhoto(){
+  var desc = document.getElementById('gal-desc').value.trim();
+  if (!galFile){ showToast('Choose a photo first', true); return; }
+  if (!desc){ showToast('Add a short description', true); return; }
+  var url = await uploadFile('gallery', galFile);
+  if (!url){ showToast('Upload failed', true); return; }
+  var ok = await sbInsert('news_events', { type:'gallery', title:desc, image_url:url });
+  if (ok){
+    showToast('Added to gallery');
+    document.getElementById('gal-desc').value='';
+    galFile=null; document.getElementById('gal-file').value=''; document.getElementById('gal-drop-label').textContent='Tap to choose a photo';
+    loadGallery();
+  } else showToast('Save failed', true);
+}
+async function loadGallery(){
+  var rows = await sbFetch('news_events', "select=*&type=eq.gallery&order=id.desc");
+  var list = document.getElementById('gal-list');
+  if (!rows.length){ list.innerHTML='<div class="empty-state">No gallery photos yet.</div>'; return; }
+  list.innerHTML = rows.map(function(r){
+    return '<div class="list-item"><div class="item-name">'+(r.title||'Untitled photo')+'</div>'+
+      '<div class="item-actions"><button class="btn btn-danger" onclick="deleteNews('+r.id+')">Delete</button></div></div>';
+  }).join('');
+}
+async function deleteNews(id){
+  if (!confirm('Delete this item?')) return;
+  var ok = await sbDelete('news_events', id);
+  if (ok){ showToast('Deleted'); loadNews(); loadGallery(); } else showToast('Failed', true);
+}
+
+// ===== ANNOUNCEMENTS =====
+function anFormatChanged(){
+  var f = document.getElementById('an-format').value;
+  document.getElementById('an-drop').style.display = (f==='text') ? 'none' : 'block';
+}
+function anFileSelected(){
+  anFile = document.getElementById('an-file').files[0];
+  document.getElementById('an-drop-label').textContent = anFile ? anFile.name : 'Tap to choose media';
+}
+async function postAnnouncement(){
+  var type = document.getElementById('an-type').value;
+  var format = document.getElementById('an-format').value;
+  var text = document.getElementById('an-text').value.trim();
+  var expiry = document.getElementById('an-expiry').value || null;
+  if (format!=='text' && !anFile){ showToast('Choose media for this format', true); return; }
+  if (format==='text' && !text){ showToast('Enter announcement text', true); return; }
+  var mediaUrl = null;
+  if (anFile){ mediaUrl = await uploadFile('announcements', anFile); if (!mediaUrl){ showToast('Upload failed', true); return; } }
+  if (type==='special'){
+    var actives = await sbFetch('announcements', 'select=id&type=eq.special&is_active=eq.true');
+    for (var i=0;i<actives.length;i++){ await sbUpdate('announcements', actives[i].id, { is_active:false }); }
+  }
+  var ok = await sbInsert('announcements', { type:type, format:format, text:text, media_url:mediaUrl, expiry_date:expiry, is_active:true });
+  if (ok){
+    showToast('Announcement posted');
+    document.getElementById('an-text').value=''; document.getElementById('an-expiry').value='';
+    anFile=null; document.getElementById('an-file').value=''; document.getElementById('an-drop-label').textContent='Tap to choose media';
+    loadAnnouncements();
+  } else showToast('Post failed', true);
+}
+async function loadAnnouncements(){
+  var rows = await sbFetch('announcements', 'select=*&order=id.desc&limit=20');
+  var list = document.getElementById('an-list');
+  if (!rows.length){ list.innerHTML='<div class="empty-state">No announcements yet.</div>'; return; }
+  list.innerHTML = rows.map(function(r){
+    return '<div class="list-item"><div><div class="item-name">'+(r.text?r.text.slice(0,50):('['+r.format+']'))+
+      (r.type==='special'?'<span class="special-badge">SPECIAL</span>':'')+
+      (!r.is_active?' (inactive)':'')+'</div>'+
+      '<div class="item-meta">'+r.format+(r.expiry_date?' · expires '+r.expiry_date:'')+'</div></div>'+
+      '<div class="item-actions">'+
+      (r.is_active?'<button class="btn btn-secondary" onclick="deactivateAnnouncement('+r.id+')">Deactivate</button>':'')+
+      '<button class="btn btn-danger" onclick="deleteAnnouncement('+r.id+')">Delete</button></div></div>';
+  }).join('');
+}
+async function deactivateAnnouncement(id){
+  var ok = await sbUpdate('announcements', id, { is_active:false });
+  if (ok){ showToast('Deactivated'); loadAnnouncements(); } else showToast('Failed', true);
+}
+async function deleteAnnouncement(id){
+  if (!confirm('Delete this announcement?')) return;
+  var ok = await sbDelete('announcements', id);
+  if (ok){ showToast('Deleted'); loadAnnouncements(); } else showToast('Failed', true);
+}
+
+// ===== BROADCAST (push notifications via Edge Function) =====
+// Requires: a `push_subscriptions` table (endpoint, keys, created_at) written to by the
+// site-side service worker registration, and a deployed Supabase Edge Function named
+// `send-push` that holds the VAPID private key and calls the Web Push protocol for each
+// subscription. This admin tab only triggers that function — see README notes below.
+var EDGE_FUNCTION_URL = NASTES_URL + '/functions/v1/send-push';
+
+function setupPushUI(){
+  refreshSubscriberCount();
+}
+async function refreshSubscriberCount(){
+  var rows = await sbFetch('push_subscriptions', 'select=id');
+  document.getElementById('bc-count').textContent = rows.length + ' device' + (rows.length===1?'':'s') + ' subscribed to notifications';
+}
+async function sendBroadcast(){
+  var title = document.getElementById('bc-title').value.trim();
+  var body = document.getElementById('bc-body').value.trim();
+  var link = document.getElementById('bc-link').value.trim();
+  if (!title || !body){ showToast('Add a title and message', true); return; }
+  var btn = document.getElementById('bc-send-btn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try{
+    var r = await fetch(EDGE_FUNCTION_URL, {
+      method:'POST',
+      headers:{ 'Authorization':'Bearer '+NASTES_KEY, 'apikey':NASTES_KEY, 'Content-Type':'application/json' },
+      body: JSON.stringify({ title:title, body:body, link:link || '/nastestpi25-26study/index.html' })
+    });
+    if (r.ok){
+      showToast('Broadcast sent');
+      document.getElementById('bc-title').value=''; document.getElementById('bc-body').value=''; document.getElementById('bc-link').value='';
+    } else {
+      showToast('Send failed — is the send-push Edge Function deployed?', true);
+    }
+  }catch(e){ showToast('Send failed — is the send-push Edge Function deployed?', true); }
+  btn.disabled = false; btn.textContent = 'Send to All Subscribers';
+}
+
+// ===== ADMIN USERS (master only) =====
+async function addAdmin(){
+  if (!currentAdmin.isMaster){ showToast('Only the master admin can add officers', true); return; }
+  var email = document.getElementById('au-email').value.trim().toLowerCase();
+  var password = document.getElementById('au-password').value.trim();
+  if (!email || password.length < 6){ showToast('Enter an email and a password of 6+ characters', true); return; }
+  var existing = await sbFetch('admin_users', 'select=id&email=eq.'+encodeURIComponent(email));
+  if (existing.length){ showToast('That email is already an officer', true); return; }
+  var ok = await sbInsert('admin_users', { email:email, password:password, is_master:false, is_active:true, created_by:currentAdmin.email });
+  if (ok){
+    showToast('Officer added: '+email);
+    document.getElementById('au-email').value=''; document.getElementById('au-password').value='';
+    loadAdmins();
+  } else showToast('Save failed', true);
+}
+async function loadAdmins(){
+  var rows = await sbFetch('admin_users', 'select=id,email,is_master,is_active&order=id.asc');
+  var list = document.getElementById('au-list');
+  if (!rows.length){ list.innerHTML='<div class="empty-state">No officers yet.</div>'; return; }
+  list.innerHTML = rows.map(function(r){
+    return '<div class="list-item"><div><div class="item-name">'+r.email+(r.is_master?'<span class="master-badge">MASTER</span>':'')+'</div>'+
+      '<div class="item-meta">'+(r.is_active?'Active':'Disabled')+'</div></div>'+
+      '<div class="item-actions">'+(r.is_master ? '' :
+        '<button class="btn btn-secondary" onclick="toggleAdmin('+r.id+','+(!r.is_active)+')">'+(r.is_active?'Disable':'Enable')+'</button>'+
+        '<button class="btn btn-danger" onclick="deleteAdmin('+r.id+')">Remove</button>')+
+      '</div></div>';
+  }).join('');
+}
+async function toggleAdmin(id, activeState){
+  if (!currentAdmin.isMaster){ showToast('Only the master admin can do this', true); return; }
+  var ok = await sbUpdate('admin_users', id, { is_active:activeState });
+  if (ok){ showToast('Updated'); loadAdmins(); } else showToast('Failed', true);
+}
+async function deleteAdmin(id){
+  if (!currentAdmin.isMaster){ showToast('Only the master admin can remove officers', true); return; }
+  if (!confirm('Remove this officer?')) return;
+  var ok = await sbDelete('admin_users', id);
+  if (ok){ showToast('Removed'); loadAdmins(); } else showToast('Failed', true);
+}
+async function changeMyPassword(){
+  var oldPw = document.getElementById('pw-old').value.trim();
+  var newPw = document.getElementById('pw-new').value.trim();
+  if (!oldPw || newPw.length < 6){ showToast('Enter your current password and a new one of 6+ characters', true); return; }
+  var rows = await sbFetch('admin_users', 'select=id,password&email=eq.'+encodeURIComponent(currentAdmin.email));
+  if (!rows.length || rows[0].password !== oldPw){ showToast('Current password is incorrect', true); return; }
+  var ok = await sbUpdate('admin_users', rows[0].id, { password:newPw });
+  if (ok){
+    showToast('Password updated');
+    document.getElementById('pw-old').value=''; document.getElementById('pw-new').value='';
+  } else showToast('Update failed', true);
+}
+</script>
+</body>
+</html>
