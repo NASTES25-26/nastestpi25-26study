@@ -1,1 +1,30 @@
+name: Keep Supabase Projects Awake
 
+# Supabase free-tier projects auto-pause after about a week with no API
+# activity. GitHub Pages itself never sleeps, but the backend does — this
+# workflow runs on a schedule and pings both Supabase projects so they
+# never go quiet long enough to be paused. It doesn't need anyone to visit
+# the site.
+
+on:
+  schedule:
+    # Runs every 3 days at 03:00 UTC. Well under the ~7 day pause window.
+    - cron: '0 3 */3 * *'
+  workflow_dispatch:
+    # Lets you trigger this manually from the Actions tab to test it.
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping NASTES Supabase project
+        run: |
+          curl -s -o /dev/null -w "NASTES Supabase responded: %{http_code}\n" \
+            "https://ixsmyvwuavlxxywzgujn.supabase.co/rest/v1/" \
+            -H "apikey: ${{ secrets.NASTES_SUPABASE_ANON_KEY }}"
+
+      - name: Ping legacy SLT Supabase project
+        run: |
+          curl -s -o /dev/null -w "SLT Supabase responded: %{http_code}\n" \
+            "https://ayoofobsthcnqzguuxmm.supabase.co/rest/v1/" \
+            -H "apikey: ${{ secrets.SLT_SUPABASE_ANON_KEY }}"
